@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='selench',
-    version='1.0',
+    version='1.1',
     packages=['selench'],
     url='https://github.com/dsymbol/selench',
     license='OSI Approved :: MIT License',
@@ -12,8 +12,8 @@ setup(
     description='Python wrapper for selenium WebDriver',
     install_requires=['selenium'],
     classifiers=[
-            "Programming Language :: Python :: 3",
-            "License :: OSI Approved :: MIT License",
-            "Operating System :: OS Independent",
-        ]
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ]
 )
