@@ -6,7 +6,7 @@ duck = "https://duckduckgo.com"
 def test_get_url(driver):
     driver.get(duck)
     assert "duckduckgo" in driver.title.lower()
-    assert driver.url == duck
+    assert duck in driver.url
 
 
 def test_css_elements(driver):

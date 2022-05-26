@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
+from typing import List
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
@@ -14,8 +16,8 @@ from .browser import BrowserSetup
 
 class Selench:
     def __init__(self, browser: str = "chrome", wait: int = 10, headless: bool = False,
-                 incognito: bool = False):
-        self.webdriver = BrowserSetup(browser, headless, incognito).create_driver()
+                 user_agent: bool = False, incognito: bool = False):
+        self.webdriver = BrowserSetup(browser, headless, user_agent, incognito).create_driver()
         self.wait = wait
 
     @property
@@ -44,7 +46,7 @@ class Selench:
     def all_window_handles(self):
         return self.webdriver.window_handles
 
-    def css_element(self, locator: str, timeout: int = None):
+    def css_element(self, locator: str, timeout: int = None) -> WebElement:
         if timeout:
             element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.CSS_SELECTOR, locator),
                                                                    f"Could not find element with the CSS `{locator}`")
@@ -54,7 +56,7 @@ class Selench:
         element.locator = (By.CSS_SELECTOR, locator)
         return element
 
-    def css_elements(self, locator: str, timeout: int = None):
+    def css_elements(self, locator: str, timeout: int = None) -> List[WebElement]:
         try:
             if timeout:
                 elements = WebDriverWait(self.webdriver, timeout).until(
@@ -70,7 +72,7 @@ class Selench:
             elements = []
         return elements
 
-    def xpath_element(self, locator: str, timeout: int = None):
+    def xpath_element(self, locator: str, timeout: int = None) -> WebElement:
         if timeout:
             element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.XPATH, locator),
                                                                    f"Could not find element with the XPATH `{locator}`")
@@ -80,7 +82,7 @@ class Selench:
         element.locator = (By.XPATH, locator)
         return element
 
-    def xpath_elements(self, locator: str, timeout: int = None):
+    def xpath_elements(self, locator: str, timeout: int = None) -> List[WebElement]:
         try:
             if timeout:
                 elements = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_elements(By.XPATH, locator),
@@ -95,7 +97,7 @@ class Selench:
         return elements
 
     @staticmethod
-    def select_element(element: WebElement):
+    def select_element(element: WebElement) -> Select:
         """
         Select lists have special behaviors compared to other elements
 
@@ -144,13 +146,13 @@ class Selench:
 
         else:
             if draggable.locator[0] != 'css selector' or droppable.locator[0] != 'css selector':
-                raise ValueError("Drag and drop only accepts elements found by CSS selectors")
+                raise ValueError("Alternative drag and drop only accepts elements found by CSS selectors")
             file_path = os.path.join(str(Path(os.path.abspath(__file__)).parents[0]), 'js', 'drag_and_drop.js')
             with open(file_path, "r") as f:
                 javascript = f.read()
             self.execute_js(javascript, draggable, droppable)
 
-    def wait_element_visibility(self, element: WebElement, timeout: int = None):
+    def wait_element_visibility(self, element: WebElement, timeout: int = None) -> WebElement:
         """
         An expectation for checking that an element, known to be present on the DOM of a page, is visible. Visibility 
         means that the element is not only displayed but also has a height and width that is greater than 0. element 
@@ -161,13 +163,14 @@ class Selench:
             driver.wait_element_visibility(element)
         """
         if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(ec.visibility_of(element), "Element is not visible")
+            element = WebDriverWait(self.webdriver, timeout).until(ec.visibility_of(element),
+                                                                   "Element is not visible")
         else:
             element = WebDriverWait(self.webdriver, self.wait).until(ec.visibility_of(element),
                                                                      "Element is not visible")
         return element
 
-    def wait_element_staleness(self, element: WebElement, timeout: int = None):
+    def wait_element_staleness(self, element: WebElement, timeout: int = None) -> WebElement:
         """
         Wait until an element is no longer attached to the DOM. element is the element to wait for.
         returns False if the element is still attached to the DOM, true otherwise.
@@ -184,10 +187,44 @@ class Selench:
                                                                      "Element did not go stale")
         return element
 
-    def has_text(self, text: str):
+    def wait_element_clickable(self, element: WebElement, timeout: int = None) -> WebElement:
+        """
+        An Expectation for checking an element is visible and enabled such that you can click it.
+
+        :Usage:
+            element = driver.css_element('header')
+            driver.wait_element_clickable(element)
+        """
+        if timeout:
+            element = WebDriverWait(self.webdriver, timeout).until(ec.element_to_be_clickable(element),
+                                                                   "Element is not clickable")
+        else:
+            element = WebDriverWait(self.webdriver, self.wait).until(ec.element_to_be_clickable(element),
+                                                                     "Element is not clickable")
+        return element
+
+    def wait_element_text(self, element: WebElement, text: str, timeout: int = None) -> bool:
+        """
+        An expectation for checking if the given text is present in the specified element.
+
+        :Usage:
+            element = driver.css_element('header')
+            driver.wait_element_clickable(element)
+        """
+        if timeout:
+            element = WebDriverWait(self.webdriver, timeout).until(
+                ec.text_to_be_present_in_element(element.locator, text),
+                f"Element text is not `{text}` but rather `{element.text}`")
+        else:
+            element = WebDriverWait(self.webdriver, self.wait).until(
+                ec.text_to_be_present_in_element(element.locator, text),
+                f"Element text is not `{text}` but rather `{element.text}`")
+        return element
+
+    def has_text(self, text: str) -> List[WebElement]:
         """
         ⚠️CASE SENSITIVE
-        Looks for string anywhere on the page, returns a WebElements containing found text if element is visible.
+        Looks for string anywhere on the page, returns WebElements containing found text if elements are visible.
         """
         elements = self.xpath_elements(f'//*[contains(text(),"{text}")]')
         found = []
@@ -217,7 +254,7 @@ class Selench:
             handle_name = self.all_window_handles[index]
             self.webdriver.switch_to.window(handle_name)
 
-    def switch_frame(self, element: WebElement):
+    def switch_frame(self, element: WebElement) -> bool:
         """
         Switching using a WebElement is the most flexible option. You can find the frame using your preferred
         selector and switch to it.
@@ -243,7 +280,7 @@ class Selench:
         """
         self.webdriver.switch_to.default_content()
 
-    def alert(self):
+    def alert(self) -> Alert:
         """
         WebDriver provides an API for working with the native popup messages offered by JavaScript.
         These popups are styled by the browser and offer limited customisation.

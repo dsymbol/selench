@@ -4,8 +4,9 @@ from selenium import webdriver
 
 
 class BrowserSetup:
-    def __init__(self, browser, headless, incognito):
+    def __init__(self, browser, headless, user_agent, incognito):
         self.headless = headless
+        self.user_agent = user_agent
         self.incognito = incognito
         self.browser = browser.lower()
 
@@ -25,7 +26,8 @@ class BrowserSetup:
 
     def firefox_options(self):
         opts = webdriver.FirefoxOptions()
-        opts.set_preference("general.useragent.override", choice(USER_AGENTS))
+        if self.user_agent:
+            opts.set_preference("general.useragent.override", choice(USER_AGENTS))
         if self.headless:
             opts.headless = True
         if self.incognito:
@@ -34,7 +36,8 @@ class BrowserSetup:
 
     def chrome_options(self):
         opts = webdriver.ChromeOptions()
-        opts.add_argument(f"user-agent={choice(USER_AGENTS)}")
+        if self.user_agent:
+            opts.add_argument(f"user-agent={choice(USER_AGENTS)}")
         if self.headless:
             opts.add_argument('headless')
         if self.incognito:

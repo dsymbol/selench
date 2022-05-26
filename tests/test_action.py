@@ -39,8 +39,10 @@ def test_right_click(driver):
 
 
 def test_drag_and_drop(driver):
+    expected = 'Dropped!'
     driver.get(f'{crossbrowsertesting}/drag-and-drop.html')
     drag = driver.css_element('div[id=draggable]')
     drop = driver.css_element('div[id=droppable]')
     driver.drag_and_drop(drag, drop)
-    assert driver.css_element('div[id=droppable] p').text.lower() == "dropped!"
+    driver.wait_element_text(drop, expected)
+    assert driver.css_element('div[id=droppable] p').text == expected
