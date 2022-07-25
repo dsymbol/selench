@@ -1,23 +1,22 @@
-the_internet = 'https://the-internet.herokuapp.com'
-duck = 'https://duckduckgo.com'
+import shared
 
 
 def test_new_window(driver):
-    driver.get(duck)
+    driver.get(shared.DUCK)
     windows = len(driver.all_window_handles)
     driver.new_window()
     assert len(driver.all_window_handles) == windows + 1
 
 
 def test_new_tab(driver):
-    driver.get(duck)
+    driver.get(shared.DUCK)
     tabs = len(driver.all_window_handles)
     driver.new_tab()
     assert len(driver.all_window_handles) == tabs + 1
 
 
 def test_switch_window(driver):
-    driver.get(duck)
+    driver.get(shared.DUCK)
     first_window = driver.current_window_handle
     driver.new_window()
     assert driver.current_window_handle != first_window
@@ -26,9 +25,8 @@ def test_switch_window(driver):
 
 
 def test_switch_frame(driver):
-    driver.get(f"{the_internet}/iframe")
-    frame = driver.css_element('iframe[id=mce_0_ifr]')
-    driver.switch_frame(frame)
+    driver.get(f"{shared.INTERNET}/iframe")
+    driver.switch_frame('iframe[id=mce_0_ifr]')
     textarea = driver.css_element('body')
     textarea.clear()
     textarea.send_keys('tests')
@@ -38,7 +36,7 @@ def test_switch_frame(driver):
 
 
 def test_alert(driver):
-    driver.get(f"{the_internet}/javascript_alerts")
+    driver.get(f"{shared.INTERNET}/javascript_alerts")
     result = driver.css_element('#result')
     driver.css_element('button[onclick*=Alert]').click()
     driver.alert().dismiss()

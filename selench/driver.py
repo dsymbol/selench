@@ -1,9 +1,6 @@
-import os
-from pathlib import Path
-from typing import List
+from typing import List, Literal
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
@@ -11,17 +8,27 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from .browser import BrowserSetup
+from .action import Action
+from .browser import Browser
+from .wait_for import WaitFor
 
 
 class Selench:
-    def __init__(self, browser: str = "chrome", wait: int = 10, headless: bool = False,
-                 user_agent: bool = False, incognito: bool = False):
-        self.webdriver = BrowserSetup(browser, headless, user_agent, incognito).create_driver()
+    def __init__(
+            self,
+            browser: Literal["chrome", "firefox"] = "chrome",
+            executable_path: str = None,
+            wait: int = 10,
+            headless: bool = False,
+            user_agent: str = None,
+            incognito: bool = False):
+        self.webdriver = Browser(browser, executable_path, headless, user_agent, incognito).create_driver()
         self.wait = wait
+        self._wait_for = WaitFor(self)
+        self._action = Action(self)
 
     @property
-    def wait(self):
+    def wait(self) -> int:
         return self._wait
 
     @wait.setter
@@ -31,70 +38,124 @@ class Selench:
         self._wait = w
 
     @property
-    def title(self):
+    def wait_for(self) -> WaitFor:
+        return self._wait_for
+
+    @property
+    def action(self) -> Action:
+        return self._action
+
+    @property
+    def title(self) -> str:
         return self.webdriver.title
 
     @property
-    def url(self):
+    def url(self) -> str:
         return self.webdriver.current_url
 
     @property
-    def current_window_handle(self):
+    def user_agent(self) -> str:
+        user_agent = self.execute_js("return navigator.userAgent;")
+        return user_agent
+
+    @property
+    def current_window_handle(self) -> str:
         return self.webdriver.current_window_handle
 
     @property
-    def all_window_handles(self):
+    def all_window_handles(self) -> List[str]:
         return self.webdriver.window_handles
 
-    def css_element(self, locator: str, timeout: int = None) -> WebElement:
-        if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.CSS_SELECTOR, locator),
-                                                                   f"Could not find element with the CSS `{locator}`")
-        else:
-            element = WebDriverWait(self.webdriver, self.wait).until(lambda d: d.find_element(By.CSS_SELECTOR, locator),
-                                                                     f"Could not find element with the CSS `{locator}`")
-        element.locator = (By.CSS_SELECTOR, locator)
+    def css_element(self, path: str, timeout: int = None) -> WebElement:
+        if not timeout: timeout = self.wait
+        element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.CSS_SELECTOR, path),
+                                                               f"Could not find element with the CSS `{path}`")
         return element
 
-    def css_elements(self, locator: str, timeout: int = None) -> List[WebElement]:
+    def css_elements(self, path: str, timeout: int = None) -> List[WebElement]:
+        if not timeout: timeout = self.wait
         try:
-            if timeout:
-                elements = WebDriverWait(self.webdriver, timeout).until(
-                    lambda d: d.find_elements(By.CSS_SELECTOR, locator),
-                    f"Could not find elements with the CSS `{locator}`")
-            else:
-                elements = WebDriverWait(self.webdriver, self.wait).until(
-                    lambda d: d.find_elements(By.CSS_SELECTOR, locator),
-                    f"Could not find elements with the CSS `{locator}`")
-            for i in elements:
-                i.locator = (By.CSS_SELECTOR, locator)
+            elements = WebDriverWait(self.webdriver, timeout).until(
+                lambda d: d.find_elements(By.CSS_SELECTOR, path),
+                f"Could not find elements with the CSS `{path}`")
         except TimeoutException:
             elements = []
         return elements
 
-    def xpath_element(self, locator: str, timeout: int = None) -> WebElement:
-        if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.XPATH, locator),
-                                                                   f"Could not find element with the XPATH `{locator}`")
-        else:
-            element = WebDriverWait(self.webdriver, self.wait).until(lambda d: d.find_element(By.XPATH, locator),
-                                                                     f"Could not find element with the XPATH `{locator}`")
-        element.locator = (By.XPATH, locator)
+    def xpath_element(self, path: str, timeout: int = None) -> WebElement:
+        if not timeout: timeout = self.wait
+        element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.XPATH, path),
+                                                               f"Could not find element with the XPATH `{path}`")
         return element
 
-    def xpath_elements(self, locator: str, timeout: int = None) -> List[WebElement]:
+    def xpath_elements(self, path: str, timeout: int = None) -> List[WebElement]:
         try:
-            if timeout:
-                elements = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_elements(By.XPATH, locator),
-                                                                        f"Could not find elements with the XPATH `{locator}`")
-            else:
-                elements = WebDriverWait(self.webdriver, self.wait).until(lambda d: d.find_elements(By.XPATH, locator),
-                                                                          f"Could not find elements with the XPATH `{locator}`")
-            for i in elements:
-                i.locator = (By.XPATH, locator)
+            if not timeout: timeout = self.wait
+            elements = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_elements(By.XPATH, path),
+                                                                    f"Could not find elements with the XPATH `{path}`")
         except TimeoutException:
             elements = []
         return elements
+
+    def element(self, path: str, timeout: int = None) -> WebElement:
+        """
+        Detects if path is CSS and returns a CSS element otherwise returns a XPath element
+
+        :Usage:
+            element = driver.element('#content')
+            Would detect that #content is a CSS path and return a CSS element
+
+            element = driver.element('//div')
+            Would detect that //div is not a CSS path and return a XPath element
+        """
+        if not timeout: timeout = self.wait
+        locator = self._detect_locator_type(path)
+        element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(*locator),
+                                                               f"Could not find element with the {locator}")
+        return element
+
+    def elements(self, path: str, timeout: int = None) -> List[WebElement]:
+        """
+        Detects if path is CSS and returns CSS elements otherwise returns XPath elements
+
+        :Usage:
+            element = driver.element('#content')
+            Would detect that #content is a CSS path and return CSS elements
+
+            element = driver.element('//div')
+            Would detect that //div is a XPath path and return XPath elements
+        """
+        try:
+            if not timeout: timeout = self.wait
+            locator = self._detect_locator_type(path)
+            elements = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_elements(*locator),
+                                                                    f"Could not find elements with the {locator}")
+        except TimeoutException:
+            elements = []
+        return elements
+
+    def _detect_locator_type(self, path: str):
+        """
+        Detects if path is CSS and returns a CSS locator otherwise returns a XPath locator
+        """
+        if self._is_css(path):
+            locator = (By.CSS_SELECTOR, path)
+        else:
+            locator = (By.XPATH, path)
+        return locator
+
+    def _is_css(self, path: str) -> bool:
+        script = """
+        const queryCheck = (s) => document.createDocumentFragment().querySelector(s)
+        
+        const isSelectorValid = (selector) => {
+          try { queryCheck(selector) } catch { return false }
+          return true
+        }    
+        
+        return isSelectorValid(arguments[0])
+        """
+        return self.execute_js(script, path)
 
     @staticmethod
     def select_element(element: WebElement) -> Select:
@@ -116,136 +177,34 @@ class Selench:
         """
         return Select(element)
 
-    def hover(self, element: WebElement):
+    def execute_js(self, js: str, *args):
         """
-        Hover over web element
-        """
-        ActionChains(self.webdriver).move_to_element(element).perform()
-
-    def double_click(self, element: WebElement):
-        """
-        Double click web element
-        """
-        ActionChains(self.webdriver).double_click(element).perform()
-
-    def right_click(self, element: WebElement):
-        """
-        Right click web element
-        """
-        ActionChains(self.webdriver).context_click(element).perform()
-
-    def drag_and_drop(self, draggable: WebElement, droppable: WebElement, alternative=False):
-        """
-        If native selenium drag and drop don't work try the alternative method by passing alternative=True
-        elements passed must be CSS elements.
-        Credits: https://github.com/SeleniumHQ/selenium/issues/8003
-        """
-        if not alternative:
-            ActionChains(self.webdriver).click_and_hold(draggable).move_to_element(droppable).perform()
-            ActionChains(self.webdriver).release().perform()
-
-        else:
-            if draggable.locator[0] != 'css selector' or droppable.locator[0] != 'css selector':
-                raise ValueError("Alternative drag and drop only accepts elements found by CSS selectors")
-            file_path = os.path.join(str(Path(os.path.abspath(__file__)).parents[0]), 'js', 'drag_and_drop.js')
-            with open(file_path, "r") as f:
-                javascript = f.read()
-            self.execute_js(javascript, draggable, droppable)
-
-    def wait_element_visibility(self, element: WebElement, timeout: int = None) -> WebElement:
-        """
-        An expectation for checking that an element, known to be present on the DOM of a page, is visible. Visibility 
-        means that the element is not only displayed but also has a height and width that is greater than 0. element 
-        is the WebElement returns the (same) WebElement once it is visible 
+        Executes JavaScript in the current window/frame
 
         :Usage:
-            element = driver.css_element('header')
-            driver.wait_element_visibility(element)
+            title = driver.execute_js('return document.title;')
+            driver.execute_js('document.getElementsByClassName("viewcode-link")[0].click()')
         """
-        if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(ec.visibility_of(element),
-                                                                   "Element is not visible")
-        else:
-            element = WebDriverWait(self.webdriver, self.wait).until(ec.visibility_of(element),
-                                                                     "Element is not visible")
-        return element
+        return self.webdriver.execute_script(js, *args)
 
-    def wait_element_staleness(self, element: WebElement, timeout: int = None) -> WebElement:
-        """
-        Wait until an element is no longer attached to the DOM. element is the element to wait for.
-        returns False if the element is still attached to the DOM, true otherwise.
+    def get_page_source(self):
+        return self.webdriver.page_source
 
-        :Usage:
-            element = driver.css_element('header')
-            driver.wait_element_staleness(element)
-        """
-        if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(ec.staleness_of(element),
-                                                                   "Element did not go stale")
-        else:
-            element = WebDriverWait(self.webdriver, self.wait).until(ec.staleness_of(element),
-                                                                     "Element did not go stale")
-        return element
-
-    def wait_element_clickable(self, element: WebElement, timeout: int = None) -> WebElement:
-        """
-        An Expectation for checking an element is visible and enabled such that you can click it.
-
-        :Usage:
-            element = driver.css_element('header')
-            driver.wait_element_clickable(element)
-        """
-        if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(ec.element_to_be_clickable(element),
-                                                                   "Element is not clickable")
-        else:
-            element = WebDriverWait(self.webdriver, self.wait).until(ec.element_to_be_clickable(element),
-                                                                     "Element is not clickable")
-        return element
-
-    def wait_element_text(self, element: WebElement, text: str, timeout: int = None) -> bool:
-        """
-        An expectation for checking if the given text is present in the specified element.
-
-        :Usage:
-            element = driver.css_element('header')
-            driver.wait_element_clickable(element)
-        """
-        if timeout:
-            element = WebDriverWait(self.webdriver, timeout).until(
-                ec.text_to_be_present_in_element(element.locator, text),
-                f"Element text is not `{text}` but rather `{element.text}`")
-        else:
-            element = WebDriverWait(self.webdriver, self.wait).until(
-                ec.text_to_be_present_in_element(element.locator, text),
-                f"Element text is not `{text}` but rather `{element.text}`")
-        return element
-
-    def has_text(self, text: str) -> List[WebElement]:
-        """
-        ⚠️CASE SENSITIVE
-        Looks for string anywhere on the page, returns WebElements containing found text if elements are visible.
-        """
-        elements = self.xpath_elements(f'//*[contains(text(),"{text}")]')
-        found = []
-        for i in elements:
-            if text in i.text and i.is_displayed():
-                found.append(i)
-        return found
-
-    def new_window(self):
+    def new_window(self, timeout: int = None):
+        if not timeout: timeout = self.wait
         expected_number = len(self.all_window_handles) + 1
         self.webdriver.switch_to.new_window("window")
-        WebDriverWait(self.webdriver, self.wait).until(ec.number_of_windows_to_be(expected_number),
-                                                       "Number of windows is not equal to expected number "
-                                                       f"`{expected_number}`")
+        WebDriverWait(self.webdriver, timeout).until(ec.number_of_windows_to_be(expected_number),
+                                                     "Number of windows is not equal to expected number "
+                                                     f"`{expected_number}`")
 
-    def new_tab(self):
+    def new_tab(self, timeout: int = None):
+        if not timeout: timeout = self.wait
         expected_number = len(self.all_window_handles) + 1
         self.webdriver.switch_to.new_window("tab")
-        WebDriverWait(self.webdriver, self.wait).until(ec.number_of_windows_to_be(expected_number),
-                                                       "Number of windows is not equal to expected number "
-                                                       f"`{expected_number}`")
+        WebDriverWait(self.webdriver, timeout).until(ec.number_of_windows_to_be(expected_number),
+                                                     "Number of windows is not equal to expected number "
+                                                     f"`{expected_number}`")
 
     def switch_window(self, name: str = None, index: int = None):
         if name:
@@ -254,18 +213,15 @@ class Selench:
             handle_name = self.all_window_handles[index]
             self.webdriver.switch_to.window(handle_name)
 
-    def switch_frame(self, element: WebElement) -> bool:
+    def switch_frame(self, path: str, timeout: int = None) -> bool:
         """
-        Switching using a WebElement is the most flexible option. You can find the frame using your preferred
-        selector and switch to it.
-
         :Usage:
-            # Using web element
-            iframe = driver.css_element("iframe[id=ifr]")
-            driver.switch_frame(iframe)
+            driver.switch_frame("iframe[id=ifr]")
         """
-        frame = WebDriverWait(self.webdriver, self.wait).until(
-            ec.frame_to_be_available_and_switch_to_it(element.locator), "Frame is not available")
+        if not timeout: timeout = self.wait
+        locator = self._detect_locator_type(path)
+        frame = WebDriverWait(self.webdriver, timeout).until(ec.frame_to_be_available_and_switch_to_it(locator),
+                                                             "Frame is not available")
         return frame
 
     def parent_frame(self):
@@ -280,7 +236,7 @@ class Selench:
         """
         self.webdriver.switch_to.default_content()
 
-    def alert(self) -> Alert:
+    def alert(self, timeout: int = None) -> Alert:
         """
         WebDriver provides an API for working with the native popup messages offered by JavaScript.
         These popups are styled by the browser and offer limited customisation.
@@ -292,7 +248,8 @@ class Selench:
             alert.send_keys('foo')
             alert.text
         """
-        alert = WebDriverWait(self.webdriver, self.wait).until(ec.alert_is_present(), "No alerts are present")
+        if not timeout: timeout = self.wait
+        alert = WebDriverWait(self.webdriver, timeout).until(ec.alert_is_present(), "No alerts are present")
         return alert
 
     def basic_auth(self, url, username, password):
@@ -311,27 +268,29 @@ class Selench:
     def close(self):
         self.webdriver.close()
 
+    def add_cookie(self, cookie_dict: dict):
+        """
+        driver.add_cookie({"name" : "foo", "value" : "bar"})
+        """
+        self.webdriver.add_cookie(cookie_dict)
+
+    def delete_cookie(self, name: str):
+        """
+        driver.delete_cookie("foo")
+        """
+        self.webdriver.delete_cookie(name)
+
     def delete_cookies(self):
         self.webdriver.delete_all_cookies()
 
-    def screenshot(self, filename: str):
-        self.webdriver.save_screenshot(filename)
+    def screenshot(self, path: str = "screenshot.png"):
+        self.webdriver.save_screenshot(path)
 
     def forward(self):
         self.webdriver.forward()
 
     def back(self):
         self.webdriver.back()
-
-    def execute_js(self, js: str, *args):
-        """
-        Executes JavaScript in the current window/frame
-
-        :Usage:
-            title = driver.execute_js('return document.title;')
-            driver.execute_js('document.getElementsByClassName("viewcode-link")[0].click()')
-        """
-        return self.webdriver.execute_script(js, *args)
 
     def maximize(self):
         self.webdriver.maximize_window()
@@ -342,16 +301,16 @@ class Selench:
     def set_window_position(self, x: int, y: int, window_handle: str = None):
         self.webdriver.set_window_position(x, y, windowHandle=window_handle)
 
-    def get_window_position(self, window_handle: str = None):
+    def get_window_position(self, window_handle: str = None) -> dict:
         return self.webdriver.get_window_position(windowHandle=window_handle)
 
-    def get_window_size(self, window_handle: str = None):
+    def get_window_size(self, window_handle: str = None) -> dict:
         return self.webdriver.get_window_size(windowHandle=window_handle)
 
     def set_window_size(self, width: int, height: int, window_handle: str = None):
         self.webdriver.set_window_size(width, height, windowHandle=window_handle)
 
-    def get_window_geometry(self):
+    def get_window_geometry(self) -> dict:
         return self.webdriver.get_window_rect()
 
     def quit(self):
