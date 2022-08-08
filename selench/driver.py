@@ -1,4 +1,6 @@
-from typing import List, Literal
+import os
+import pickle
+from typing import List, Literal, Union
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.alert import Alert
@@ -17,8 +19,8 @@ class Selench:
     def __init__(
             self,
             browser: Literal["chrome", "firefox"] = "chrome",
-            executable_path: str = None,
             wait: int = 10,
+            executable_path: str = None,
             headless: bool = False,
             user_agent: str = None,
             incognito: bool = False):
@@ -59,12 +61,20 @@ class Selench:
         return user_agent
 
     @property
+    def browser(self) -> str:
+        return self.webdriver.name
+
+    @property
     def current_window_handle(self) -> str:
         return self.webdriver.current_window_handle
 
     @property
     def all_window_handles(self) -> List[str]:
         return self.webdriver.window_handles
+
+    @property
+    def log_types(self) -> List[str]:
+        return self.webdriver.log_types
 
     def css_element(self, path: str, timeout: int = None) -> WebElement:
         if not timeout: timeout = self.wait
@@ -190,6 +200,13 @@ class Selench:
     def get_page_source(self):
         return self.webdriver.page_source
 
+    def get_log(self, log_type: str):
+        """
+        Gets the log for a given log type
+        driver.log_types to get available log types
+        """
+        self.webdriver.get_log(log_type)
+
     def new_window(self, timeout: int = None):
         if not timeout: timeout = self.wait
         expected_number = len(self.all_window_handles) + 1
@@ -252,9 +269,10 @@ class Selench:
         alert = WebDriverWait(self.webdriver, timeout).until(ec.alert_is_present(), "No alerts are present")
         return alert
 
-    def basic_auth(self, url, username, password):
+    def basic_auth(self, url: str, username: str, password: str):
         """
-        Basic javascript username:password url authentication
+        Basic javascript username:password URL authentication
+        URL must contain protocol e.g. https
         """
         new_url = url.replace('//', f'//{username}:{password}@')
         self.get(new_url)
@@ -268,6 +286,9 @@ class Selench:
     def close(self):
         self.webdriver.close()
 
+    def get_all_cookies(self):
+        return self.webdriver.get_cookies()
+
     def add_cookie(self, cookie_dict: dict):
         """
         driver.add_cookie({"name" : "foo", "value" : "bar"})
@@ -280,8 +301,24 @@ class Selench:
         """
         self.webdriver.delete_cookie(name)
 
-    def delete_cookies(self):
+    def delete_all_cookies(self):
         self.webdriver.delete_all_cookies()
+
+    def session(self, path: str = "cookies.pkl"):
+        """
+        Save session cookies to specified path for later use if file path doesn't exist.
+        Load session cookies from specified path otherwise.
+        """
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                cookies = pickle.load(f)
+            [self.add_cookie(cookie) for cookie in cookies]
+            self.refresh()
+        else:
+            input("Press ENTER once ready to save the session")
+            cookies = self.get_all_cookies()
+            with open(path, "wb") as f:
+                pickle.dump(cookies, f)
 
     def screenshot(self, path: str = "screenshot.png"):
         self.webdriver.save_screenshot(path)
@@ -297,6 +334,12 @@ class Selench:
 
     def minimize(self):
         self.webdriver.minimize_window()
+
+    def fullscreen(self):
+        self.webdriver.fullscreen_window()
+
+    def set_page_load_timeout(self, time: Union[int, float]):
+        self.webdriver.set_page_load_timeout(time)
 
     def set_window_position(self, x: int, y: int, window_handle: str = None):
         self.webdriver.set_window_position(x, y, windowHandle=window_handle)

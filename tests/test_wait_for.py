@@ -1,5 +1,3 @@
-from selenium.webdriver import Keys
-
 import shared
 
 
