@@ -23,8 +23,10 @@ class Selench:
             executable_path: str = None,
             headless: bool = False,
             user_agent: str = None,
-            incognito: bool = False):
-        self.webdriver = Browser(browser, executable_path, headless, user_agent, incognito).create_driver()
+            incognito: bool = False,
+            binary_location: str = None
+    ):
+        self.webdriver = Browser(browser, executable_path, headless, user_agent, incognito, binary_location).create_driver()
         self.wait = wait
         self._wait_for = WaitFor(self)
         self._action = Action(self)

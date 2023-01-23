@@ -2,11 +2,12 @@ from selenium import webdriver
 
 
 class Browser:
-    def __init__(self, browser, executable_path, headless, user_agent, incognito):
+    def __init__(self, browser, executable_path, headless, user_agent, incognito, binary_location):
         self.executable_path = executable_path
         self.headless = headless
         self.user_agent = user_agent
         self.incognito = incognito
+        self.binary_location = binary_location
         self.browser = browser.lower()
 
     @property
@@ -17,10 +18,10 @@ class Browser:
     def browser(self, b):
         if b == "chrome":
             self.opts = self.chrome_options()
-            if not self.executable_path: self.executable_path = "chromedriver"
+            self.executable_path = self.executable_path if self.executable_path else "chromedriver"
         elif b == "firefox":
             self.opts = self.firefox_options()
-            if not self.executable_path: self.executable_path = "geckodriver"
+            self.executable_path = self.executable_path if self.executable_path else "geckodriver"
         else:
             raise Exception("Browser unsupported by Selench")
         self._browser = b
@@ -33,6 +34,8 @@ class Browser:
             opts.headless = True
         if self.incognito:
             opts.set_preference("browser.private.browsing.autostart", True)
+        if self.binary_location:
+            opts.binary_location = self.binary_location
         return opts
 
     def chrome_options(self):
@@ -43,6 +46,8 @@ class Browser:
             opts.add_argument('headless')
         if self.incognito:
             opts.add_argument('--incognito')
+        if self.binary_location:
+            opts.binary_location = self.binary_location
         return opts
 
     def create_driver(self):
