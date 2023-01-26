@@ -7,170 +7,300 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 class WaitFor:
+    """
+    This class provides methods for waiting for certain conditions to be met in a web page
+    using Selenium's WebDriverWait and ExpectedConditions.
+    """
     def __init__(self, driver):
         self._driver = driver
 
-    def element_visibility(self, path: str, timeout: int = None) -> WebElement:
+    def element_clickable(self, selector: str, timeout: int = None) -> WebElement:
+        """
+        An Expectation for checking an element is visible and enabled such that you can click it.
+
+        Args:
+            selector: The selector of the element to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            The clickable element.
+
+        Raises:
+            Exception: If the element is not clickable.
+        """
+        if not timeout: timeout = self._driver.wait
+        locator = self._driver._detect_locator_type(selector)
+        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.element_to_be_clickable(locator),
+                                                                       "Element is not clickable")
+        return element
+
+    def element_visibility(self, selector: str, timeout: int = None) -> WebElement:
         """
         An expectation for checking that an element is present on the DOM of a page and visible.
         Visibility means that the element is not only displayed but also has a height and width
         that is greater than 0.
+
+        Args:
+            selector: The selector of the element to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            The located and visible element.
+
+        Raises:
+            Exception: If the element is not visible within the given timeout.
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.visibility_of_element_located(locator),
                                                                        "Element is not visible")
         return element
 
-    def elements_visibility(self, path: str, timeout: int = None) -> List[WebElement]:
+    def elements_visibility(self, selector: str, timeout: int = None) -> List[WebElement]:
         """
         An expectation for checking that all elements are present on the DOM of a page and visible.
         Visibility means that the elements are not only displayed but also has a height and width
         that is greater than 0.
+
+        Args:
+            selector: The selector of the elements to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            A list of located and visible elements.
+
+        Raises:
+            Exception: If the element are not visible within the given timeout.
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         elements = WebDriverWait(self._driver.webdriver, timeout).until(ec.visibility_of_all_elements_located(locator),
                                                                         "Not all elements are visible")
         return elements
 
-    def element_invisibility(self, path: str, timeout: int = None) -> WebElement:
+    def element_invisibility(self, selector: str, timeout: int = None) -> WebElement:
         """
         An Expectation for checking that an element is either invisible or not present on the DOM.
+
+        Args:
+            selector: The selector of the element to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            The invisible element.
+
+        Raises:
+            Exception: If the element is not invisible within the given timeout.
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.invisibility_of_element_located(locator),
                                                                        "Element is not invisible")
         return element
 
-    def elements_invisibility(self, path: str, timeout: int = None) -> List[WebElement]:
+    def elements_invisibility(self, selector: str, timeout: int = None) -> List[WebElement]:
         """
         An Expectation for checking that elements are either invisible or not present on the DOM.
+
+        Args:
+            selector: The selector of the elements to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            A list of invisible elements.
+
+        Raises:
+            Exception: If the elements are not invisible within the given timeout.
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         elements = WebDriverWait(self._driver.webdriver, timeout).until(
             self._visibility_of_all_elements_located(locator), "Elements are not invisible")
         return elements
 
-    def element_staleness(self, element: WebElement, timeout: int = None) -> WebElement:
+    def element_staleness(self, element: WebElement, timeout: int = None) -> bool:
         """
         Wait until an element is no longer attached to the DOM. element is the element to wait for.
-        returns False if the element is still attached to the DOM, true otherwise.
+
+        Args:
+            element: The WebElement to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the element is no longer attached to the DOM.
+
+        Raises:
+            Exception: If the element is not stale.
         """
         if not timeout: timeout = self._driver.wait
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.staleness_of(element),
                                                                        "Element did not go stale")
         return element
 
-    def element_clickable(self, path: str, timeout: int = None) -> WebElement:
-        """
-        An Expectation for checking an element is visible and enabled such that you can click it.
-        """
-        if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
-        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.element_to_be_clickable(locator),
-                                                                       "Element is not clickable")
-        return element
-
-    def element_text(self, path: str, timeout: int = None) -> bool:
+    def element_text(self, selector: str, timeout: int = None) -> bool:
         """
         An expectation for checking if text is present in the specified element.
 
-        :Usage:
-            driver.wait_for.element_text('//div[@id="msg"]')
+        Args:
+            selector: The selector of the element to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if text is present in the element.
+
+        Raises:
+            Exception: If the element does not contain text.
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(lambda d: bool(d.find_element(*locator).text),
                                                                        "No text in element")
         return element
 
-    def element_text_to_be(self, path: str, text: str, timeout: int = None) -> bool:
+    def element_text_to_be(self, selector: str, text: str, timeout: int = None) -> bool:
         """
         An expectation for checking if the given text is present in the specified element.
 
-        :Usage:
+        Args:
+            selector: The selector of the element to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if text is present in the element.
+
+        Raises:
+            Exception: If the element does not contain text.
+
+        Example::
+
             driver.wait_for.element_text_to_be('//div[@id="msg"]', 'welcome')
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.text_to_be_present_in_element(locator, text),
                                                                        f"Element text is not `{text}`")
         return element
 
-    def element_selection_state(self, path: str, is_selected: bool, timeout: int = None) -> bool:
+    def element_selection_state(self, selector: str, is_selected: bool, timeout: int = None) -> bool:
         """
         An expectation to locate an element and check if the selection state specified is in that state.
-        is_selected is a boolean
 
-        :Usage:
+        Args:
+            selector: The selector of the element to wait for.
+            is_selected: True for checked False otherwise.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the selection state specified is in that state.
+
+        Raises:
+            Exception: if the selection state specified is not in that state.
+
+        Example::
+
             driver.wait_for.element_selection_state('input[type="checkbox"]', False)
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(
             ec.element_located_selection_state_to_be(locator, is_selected),
             "Element is not selected" if is_selected else "Element is selected")
         return element
 
-    def element_presence(self, path: str, timeout: int = None) -> WebElement:
+    def element_presence(self, selector: str, timeout: int = None) -> WebElement:
         """
         An expectation for checking that an element is present on the DOM of a page.
+
+        Args:
+            selector: The selector of the element to wait for.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            The DOM present element.
+
+        Raises:
+            Exception: If the element is not present on the DOM.
         """
         if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
+        locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.presence_of_element_located(locator),
                                                                        "Element is not present on the DOM")
         return element
 
-    def elements_presence(self, path: str, timeout: int = None) -> List[WebElement]:
-        """
-        An expectation for checking that there is at least one element present on a web page.
-        """
-        if not timeout: timeout = self._driver.wait
-        locator = self._driver._detect_locator_type(path)
-        elements = WebDriverWait(self._driver.webdriver, timeout).until(ec.presence_of_element_located(locator),
-                                                                        "Elements are not present on the DOM")
-        return elements
-
     def url_to_be(self, url: str, timeout: int = None) -> bool:
         """
-        An expectation for checking the current url. url is the expected url, which must be an exact match
-        returns True if the url matches, false otherwise.
+        An expectation for checking the current url is the expected url, which must be an exact match.
+
+        Args:
+            url: The expected url.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the current url is the expected url.
+
+        Raises:
+            Exception: if current url is not the expected url.
         """
         if not timeout: timeout = self._driver.wait
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.url_to_be(url),
                                                                        f"{url} != {self._driver.url}")
         return element
 
-    def url_to_contain(self, url: str, timeout: int = None) -> bool:
+    def url_to_contain(self, string: str, timeout: int = None) -> bool:
         """
         An expectation for checking that the current url contains a case-sensitive substring.
+
+        Args:
+            string: The expected case-sensitive substring.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the current url contains the string.
+
+        Raises:
+            Exception: if the current url does not contain the string.
         """
         if not timeout: timeout = self._driver.wait
-        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.url_contains(url),
-                                                                       f"`{self._driver.url}` does not contain `{url}`")
+        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.url_contains(string),
+                                                                       f"`{self._driver.url}` does not contain `{string}`")
         return element
 
     def title_to_be(self, title: str, timeout: int = None) -> bool:
         """
         An expectation for checking the title of a page. title is the expected title, which must be an exact
-        match returns True if the title matches, false otherwise.
+
+        Args:
+            title: The expected title.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the title matches.
+
+        Raises:
+            Exception: if the title doesn't match.
         """
         if not timeout: timeout = self._driver.wait
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.title_is(title),
                                                                        f"`{title} != {self._driver.title}")
         return element
 
-    def title_to_contain(self, title: str, timeout: int = None) -> bool:
+    def title_to_contain(self, string: str, timeout: int = None) -> bool:
         """
         An expectation for checking that the title contains a case-sensitive substring.
+
+        Args:
+            string: The expected case-sensitive substring.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the current title contains the string.
+
+        Raises:
+            Exception: if the current title does not contain the string.
         """
         if not timeout: timeout = self._driver.wait
-        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.title_contains(title),
-                                                                       f"`{self._driver.title}` does not contain `{title}`")
+        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.title_contains(string),
+                                                                       f"`{self._driver.title}` does not contain `{string}`")
         return element
 
     """
