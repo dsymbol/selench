@@ -157,12 +157,13 @@ class WaitFor:
                                                                        "No text in element")
         return element
 
-    def element_text_to_be(self, selector: str, text: str, timeout: int = None) -> bool:
+    def element_text_to_include(self, selector: str, text: str, timeout: int = None) -> bool:
         """
         An expectation for checking if the given text is present in the specified element.
 
         Args:
-            selector: The selector of the element to wait for.
+            selector: The selector of the element.
+            text: The text to search for in the selected element's text.
             timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
 
         Returns:
@@ -179,6 +180,33 @@ class WaitFor:
         locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.text_to_be_present_in_element(locator, text),
                                                                        f"Element text is not `{text}`")
+        return element
+
+    def element_attribute_text_to_include(self, selector: str, attribute: str, text: str, timeout: int = None) -> bool:
+        """
+        An expectation for checking if the given text is present in the element’s attribute.
+
+        Args:
+            selector: The selector of the element.
+            attribute: The name of the attribute to check for the presence of the given text.
+            text: The text to search for in the selected element's attribute.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if text is present in the attribute.
+
+        Raises:
+            Exception: If the element's attribute does not contain text.
+
+        Example::
+
+            driver.wait_for.element_attribute_text_to_include('//div[@id="msg"]', 'value', 'new message')
+        """
+        if not timeout: timeout = self._driver.wait
+        locator = self._driver._detect_locator_type(selector)
+        element = WebDriverWait(self._driver.webdriver, timeout).until(ec.text_to_be_present_in_element_attribute(
+            locator, attribute, text), "Text is not present in attribute"
+        )
         return element
 
     def element_selection_state(self, selector: str, is_selected: bool, timeout: int = None) -> bool:
@@ -246,7 +274,7 @@ class WaitFor:
                                                                        f"{url} != {self._driver.url}")
         return element
 
-    def url_to_contain(self, string: str, timeout: int = None) -> bool:
+    def url_to_include(self, string: str, timeout: int = None) -> bool:
         """
         An expectation for checking that the current url contains a case-sensitive substring.
 
@@ -267,7 +295,7 @@ class WaitFor:
 
     def title_to_be(self, title: str, timeout: int = None) -> bool:
         """
-        An expectation for checking the title of a page. title is the expected title, which must be an exact
+        An expectation for checking the title of a page. title is the expected title, which must be an exact match.
 
         Args:
             title: The expected title.
