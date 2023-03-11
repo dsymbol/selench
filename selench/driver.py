@@ -440,15 +440,14 @@ class Selench:
                 javascript = f.read()
             self.driver.execute_js(javascript, draggable, droppable)
 
-    @staticmethod
-    def select_element(element: WebElement) -> Select:
+    def select_element(self, element_or_selector: Union[str, WebElement]) -> Select:
         """
         Convert a web element to a Select object. The Select object provides a convenient way to interact with
         select elements (drop-down lists) on a webpage. It allows the user to select one or more options from the list,
         and also provides methods to retrieve the selected options, as well as other useful information about the select element.
 
         Args:
-            element: The web element to convert to a Select object.
+            element_or_selector: The web element or selector to convert to a Select object.
 
         Returns:
             Select: The converted Select object.
@@ -467,7 +466,13 @@ class Selench:
             # Select an <option> based upon its text
             select_object.select_by_visible_text('Bread')
         """
-        return Select(element)
+        if isinstance(element_or_selector, str):
+            element_or_selector = self.element(element_or_selector)
+        elif isinstance(element_or_selector, WebElement):
+            pass
+        else:
+            raise ValueError('Unsupported variable type ' + str(type(element_or_selector)))
+        return Select(element_or_selector)
 
     def execute_js(self, script: str, *args):
         """
