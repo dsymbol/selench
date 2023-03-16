@@ -3,8 +3,7 @@ Main module that holds all the methods to interact with the browser.
 
 ::
 
-    from selench import Selench
-    from selenium.webdriver import Keys
+    from selench import Selench, Keys
 
     driver = Selench()
     driver.get('https://google.com')
@@ -261,9 +260,8 @@ class Selench:
 
         Example::
 
-            from selenium.webdriver import Keys
+            from selench import Keys
 
-            driver.send_keys('//input', 'Hello World')
             driver.send_keys('textarea', 'Hello World', Keys.ENTER)
         """
         if not timeout: timeout = self.wait
