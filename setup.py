@@ -1,19 +1,21 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='selench',
-    version='1.3',
-    packages=['selench'],
+    version='0.0.0',
+    packages=find_packages(),
     url='https://github.com/dsymbol/selench',
     license='OSI Approved :: MIT License',
     author='dsymbol',
-    author_email='',
-    platforms='OS Independent',
     description='Selenium WebDriver wrapper for Python',
-    install_requires=['selenium'],
+    include_package_data=True,
+    long_description=open("README.md", encoding='utf-8').read(),
+    long_description_content_type="text/markdown",
+    install_requires=[
+        'selenium'
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "License :: OSI Approved :: MIT License"
     ]
 )
