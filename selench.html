@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>selench package &mdash; selench  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="selench" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            selench
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">selench</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">selench package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-selench.driver">selench.driver module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#selench.driver.Selench"><code class="docutils literal notranslate"><span class="pre">Selench</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-selench.wait_for">selench.wait_for module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#selench.wait_for.WaitFor"><code class="docutils literal notranslate"><span class="pre">WaitFor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-selench">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">selench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">selench</a></li>
+      <li class="breadcrumb-item active">selench package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/selench.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="selench-package">
+<h1>selench package<a class="headerlink" href="#selench-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-selench.driver">
+<span id="selench-driver-module"></span><h2>selench.driver module<a class="headerlink" href="#module-selench.driver" title="Permalink to this heading"></a></h2>
+<p>Main module that holds all the methods to interact with the browser.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">selench</span> <span class="kn">import</span> <span class="n">Selench</span><span class="p">,</span> <span class="n">Keys</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">Selench</span><span class="p">()</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://google.com&#39;</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">element</span><span class="p">(</span><span class="s1">&#39;input[name=&quot;q&quot;]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">,</span> <span class="n">Keys</span><span class="o">.</span><span class="n">ENTER</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="selench.driver.Selench">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">selench.driver.</span></span><span class="sig-name descname"><span class="pre">Selench</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">browser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'chrome'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'firefox'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'chrome'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executable_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headless</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incognito</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is the main class that holds all the methods to interact with the browser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>browser</strong> – The browser to use.</p></li>
+<li><p><strong>wait</strong> – The default explicit wait time for WebDriverWait.</p></li>
+<li><p><strong>executable_path</strong> – The path to the driver executable.</p></li>
+<li><p><strong>headless</strong> – Run browser in headless mode.</p></li>
+<li><p><strong>user_agent</strong> – The user agent to use.</p></li>
+<li><p><strong>incognito</strong> – Run browser in incognito mode.</p></li>
+<li><p><strong>binary_location</strong> – The location of the browser executable.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.webdriver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">webdriver</span></span><a class="headerlink" href="#selench.driver.Selench.webdriver" title="Permalink to this definition"></a></dt>
+<dd><p>This property provides access to the underlying webdriver instance.
+Can be used to access webdriver’s methods and properties that are not yet implemented in this package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>webdriver instance</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://www.google.com&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.wait_for">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait_for</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#selench.wait_for.WaitFor" title="selench.wait_for.WaitFor"><span class="pre">WaitFor</span></a></em><a class="headerlink" href="#selench.driver.Selench.wait_for" title="Permalink to this definition"></a></dt>
+<dd><p>This property provides access to the WaitFor class, which contains explicit wait functions.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_visibility</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.css_element">
+<span class="sig-name descname"><span class="pre">css_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.css_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.css_element" title="Permalink to this definition"></a></dt>
+<dd><p>Find the first matching element on a page by its CSS selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The CSS selector for the element.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the element to be found. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The found WebElement.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not found.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">css_element</span><span class="p">(</span><span class="s1">&#39;#content&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.css_elements">
+<span class="sig-name descname"><span class="pre">css_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">WebElement</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.css_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.css_elements" title="Permalink to this definition"></a></dt>
+<dd><p>Find multiple elements on the page by their CSS selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The CSS selector for the elements.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the elements to be found. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the found WebElements. If no elements are found, an empty list is returned.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">css_elements</span><span class="p">(</span><span class="s1">&#39;#content&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.xpath_element">
+<span class="sig-name descname"><span class="pre">xpath_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.xpath_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.xpath_element" title="Permalink to this definition"></a></dt>
+<dd><p>Find the first matching element on a page by its XPATH selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The XPATH selector for the element.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the element to be found. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The found WebElement.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not found.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">xpath_element</span><span class="p">(</span><span class="s1">&#39;//div&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.xpath_elements">
+<span class="sig-name descname"><span class="pre">xpath_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">WebElement</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.xpath_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.xpath_elements" title="Permalink to this definition"></a></dt>
+<dd><p>Find multiple elements on the page by their XPATH selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The XPATH selector for the elements.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the elements to be found. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the found WebElements. If no elements are found, an empty list is returned.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">xpath_elements</span><span class="p">(</span><span class="s1">&#39;//div&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.element">
+<span class="sig-name descname"><span class="pre">element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.element" title="Permalink to this definition"></a></dt>
+<dd><p>Identifies the type of the provided selector and find the first matching element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector for the element.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the element to be found. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The found WebElement.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not found.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Would detect that #content is a CSS selector and return a CSS element</span>
+<span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">element</span><span class="p">(</span><span class="s1">&#39;#content&#39;</span><span class="p">)</span>
+
+<span class="c1"># Would detect that //div is not a CSS selector and return an XPath element</span>
+<span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">element</span><span class="p">(</span><span class="s1">&#39;//div&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.elements">
+<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">WebElement</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.elements" title="Permalink to this definition"></a></dt>
+<dd><p>Identifies the type of the provided selector and find a list of matching element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector for the element.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the elements to be found. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the found WebElements. If no elements are found, an empty list is returned.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Would detect that #content is a CSS selector and return a list of CSS elements</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">elements</span><span class="p">(</span><span class="s1">&#39;#content&#39;</span><span class="p">)</span>
+
+<span class="c1"># Would detect that //div is not a CSS selector and return a list of XPath elements</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">elements</span><span class="p">(</span><span class="s1">&#39;//div&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.click">
+<span class="sig-name descname"><span class="pre">click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.click" title="Permalink to this definition"></a></dt>
+<dd><p>Clicks on an element on the webpage using the given selector.
+Waits for the element to be clickable before clicking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – selector of the element to be clicked</p></li>
+<li><p><strong>timeout</strong> – maximum time to wait for the element to be clicked. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="s1">&#39;#button&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.send_keys">
+<span class="sig-name descname"><span class="pre">send_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.send_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.send_keys" title="Permalink to this definition"></a></dt>
+<dd><p>Sends keys to an element on the webpage using the given selector.
+Waits for the element to be visible and enabled before sending keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – selector of the element to send keys to</p></li>
+<li><p><strong>*values</strong> – keys to be sent to the element</p></li>
+<li><p><strong>timeout</strong> – maximum time to wait for the keys to be sent. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">selench</span> <span class="kn">import</span> <span class="n">Keys</span>
+
+<span class="n">driver</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">,</span> <span class="n">Keys</span><span class="o">.</span><span class="n">ENTER</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.wait">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#selench.driver.Selench.wait" title="Permalink to this definition"></a></dt>
+<dd><p>The default explicit wait time for WebDriverWait.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Wait time</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.title">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#selench.driver.Selench.title" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the title of the current page.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.url">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#selench.driver.Selench.url" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the url of the current page.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.user_agent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_agent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#selench.driver.Selench.user_agent" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the user agent of the current browser instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.browser">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">browser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#selench.driver.Selench.browser" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the name of the browser instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.current_window_handle">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_window_handle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#selench.driver.Selench.current_window_handle" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the handle of the current window.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.all_window_handles">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_window_handles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#selench.driver.Selench.all_window_handles" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of all window handles.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="selench.driver.Selench.log_types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#selench.driver.Selench.log_types" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of log types available to the webdriver.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clears the text of an element on the webpage using the given selector.
+Waits for the element to be visible and enabled before clearing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – selector of the element to be cleared</p></li>
+<li><p><strong>timeout</strong> – maximum time to wait for the element to be cleared. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.hover">
+<span class="sig-name descname"><span class="pre">hover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.hover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.hover" title="Permalink to this definition"></a></dt>
+<dd><p>Move the mouse cursor over the provided web element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>element</strong> – The web element to hover over.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.double_click">
+<span class="sig-name descname"><span class="pre">double_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.double_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.double_click" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a double click on the provided web element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>element</strong> – The web element to perform the double click on.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.right_click">
+<span class="sig-name descname"><span class="pre">right_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.right_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.right_click" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a right click on the provided web element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>element</strong> – The web element to perform the right click on.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.scroll_to_element">
+<span class="sig-name descname"><span class="pre">scroll_to_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.scroll_to_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.scroll_to_element" title="Permalink to this definition"></a></dt>
+<dd><p>Scroll the page to the provided web element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>element</strong> – The web element to scroll to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.scroll_amount">
+<span class="sig-name descname"><span class="pre">scroll_amount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.scroll_amount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.scroll_amount" title="Permalink to this definition"></a></dt>
+<dd><p>Scroll the page by a specified amount in the x and y directions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – The amount to scroll in the horizontal direction. Negative values scroll left, positive values scroll right.</p></li>
+<li><p><strong>y</strong> – The amount to scroll in the vertical direction. Negative values scroll up, positive values scroll down.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.scroll_to_page_bottom">
+<span class="sig-name descname"><span class="pre">scroll_to_page_bottom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.scroll_to_page_bottom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.scroll_to_page_bottom" title="Permalink to this definition"></a></dt>
+<dd><p>Scroll the page to the bottom.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.drag_and_drop">
+<span class="sig-name descname"><span class="pre">drag_and_drop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">draggable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">droppable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.drag_and_drop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.drag_and_drop" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a drag and drop action on the provided web elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>draggable</strong> – The web element to be dragged.</p></li>
+<li><p><strong>droppable</strong> – The web element to be dropped on.</p></li>
+<li><p><strong>alternative</strong> – Whether to use an alternative method for the drag and drop action. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.select_element">
+<span class="sig-name descname"><span class="pre">select_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_or_selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">WebElement</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Select</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.select_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.select_element" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a web element to a Select object. The Select object provides a convenient way to interact with
+select elements (drop-down lists) on a webpage. It allows the user to select one or more options from the list,
+and also provides methods to retrieve the selected options, as well as other useful information about the select element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>element_or_selector</strong> – The web element or selector to convert to a Select object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The converted Select object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Select</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">css_element</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">)</span>
+<span class="n">select_object</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">select_element</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+<span class="c1"># Select an &lt;option&gt; based upon the &lt;select&gt; element&#39;s internal index</span>
+<span class="n">select_object</span><span class="o">.</span><span class="n">select_by_index</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Select an &lt;option&gt; based upon its value attribute</span>
+<span class="n">select_object</span><span class="o">.</span><span class="n">select_by_value</span><span class="p">(</span><span class="s1">&#39;value1&#39;</span><span class="p">)</span>
+
+<span class="c1"># Select an &lt;option&gt; based upon its text</span>
+<span class="n">select_object</span><span class="o">.</span><span class="n">select_by_visible_text</span><span class="p">(</span><span class="s1">&#39;Bread&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.execute_js">
+<span class="sig-name descname"><span class="pre">execute_js</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.execute_js"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.execute_js" title="Permalink to this definition"></a></dt>
+<dd><p>Execute a JavaScript script on the current page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>script</strong> – The JavaScript script to execute.</p></li>
+<li><p><strong>*args</strong> – Any additional arguments to pass to the script.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The return value of the script, if any.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># get title of current page</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">execute_js</span><span class="p">(</span><span class="s1">&#39;return document.title;&#39;</span><span class="p">)</span>
+<span class="c1"># click an element with an id of content</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">execute_js</span><span class="p">(</span><span class="s1">&#39;document.querySelector(&#39;</span><span class="c1">#content&#39;).click()&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get_page_source">
+<span class="sig-name descname"><span class="pre">get_page_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.get_page_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get_page_source" title="Permalink to this definition"></a></dt>
+<dd><p>Get the entire HTML source of the current page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The HTML source of the current page.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get_log">
+<span class="sig-name descname"><span class="pre">get_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/driver.html#Selench.get_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get_log" title="Permalink to this definition"></a></dt>
+<dd><p>Get the log for a specific log type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_type</strong> – The type of log to retrieve. Use the log_types attribute to get a list of available log types.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of log entries for the specified log type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.new_window">
+<span class="sig-name descname"><span class="pre">new_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.new_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.new_window" title="Permalink to this definition"></a></dt>
+<dd><p>Open a new browser window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – The time to wait for the new window to open. Default is None, which means use the default wait time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.new_tab">
+<span class="sig-name descname"><span class="pre">new_tab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.new_tab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.new_tab" title="Permalink to this definition"></a></dt>
+<dd><p>Open a new browser tab.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – The time to wait for the new tab to open. Default is None, which means use the default wait time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.switch_window">
+<span class="sig-name descname"><span class="pre">switch_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.switch_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.switch_window" title="Permalink to this definition"></a></dt>
+<dd><p>Switch focus to a different browser window or tab.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the window or tab to switch to.</p></li>
+<li><p><strong>index</strong> – The index of the window or tab to switch to.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.switch_frame">
+<span class="sig-name descname"><span class="pre">switch_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.switch_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.switch_frame" title="Permalink to this definition"></a></dt>
+<dd><p>Switch the focus of future commands to the frame identified by its selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector for the frame.</p></li>
+<li><p><strong>timeout</strong> – The time to wait for the frame to be available. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the frame was found and switched to</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the frame is not found.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Example::</dt><dd><p>driver.switch_frame(“iframe[id=ifr]”)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.parent_frame">
+<span class="sig-name descname"><span class="pre">parent_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.parent_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.parent_frame" title="Permalink to this definition"></a></dt>
+<dd><p>Switch to the parent frame of the current frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.leave_frame">
+<span class="sig-name descname"><span class="pre">leave_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.leave_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.leave_frame" title="Permalink to this definition"></a></dt>
+<dd><p>Exit all frames and switch to the default content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.alert">
+<span class="sig-name descname"><span class="pre">alert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Alert</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.alert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.alert" title="Permalink to this definition"></a></dt>
+<dd><p>Get the alert box that is currently open.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – The time to wait for the alert to appear. Default is None, which means use the default wait time.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The alert box that is currently open.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>TimeoutException</strong> – If the alert is not present within the specified timeout.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">alert</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">alert</span><span class="p">()</span>
+<span class="n">alert</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+<span class="n">alert</span><span class="o">.</span><span class="n">dismiss</span><span class="p">()</span>
+<span class="n">alert</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">alert</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.basic_auth">
+<span class="sig-name descname"><span class="pre">basic_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.basic_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.basic_auth" title="Permalink to this definition"></a></dt>
+<dd><p>Perform basic URL authentication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The URL to access, must include protocol (e.g. <a class="reference external" href="https://">https://</a>)</p></li>
+<li><p><strong>username</strong> – The username for the authentication.</p></li>
+<li><p><strong>password</strong> – The password for the authentication.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">basic_auth</span><span class="p">(</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get" title="Permalink to this definition"></a></dt>
+<dd><p>Navigates to the specified URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> – The URL to navigate to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.refresh" title="Permalink to this definition"></a></dt>
+<dd><p>Refresh the current page.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.close" title="Permalink to this definition"></a></dt>
+<dd><p>Closes the current window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get_all_cookies">
+<span class="sig-name descname"><span class="pre">get_all_cookies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.get_all_cookies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get_all_cookies" title="Permalink to this definition"></a></dt>
+<dd><p>Get all cookies of the current session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries, with each dictionary representing a cookie.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.add_cookie">
+<span class="sig-name descname"><span class="pre">add_cookie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookie_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.add_cookie"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.add_cookie" title="Permalink to this definition"></a></dt>
+<dd><p>Add a cookie to the current session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cookie_dict</strong> – A dictionary representing the cookie, with keys “name” and “value”.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">add_cookie</span><span class="p">({</span><span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span> <span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.delete_cookie">
+<span class="sig-name descname"><span class="pre">delete_cookie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.delete_cookie"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.delete_cookie" title="Permalink to this definition"></a></dt>
+<dd><p>Delete a specific cookie by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the cookie to be deleted.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.delete_all_cookies">
+<span class="sig-name descname"><span class="pre">delete_all_cookies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.delete_all_cookies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.delete_all_cookies" title="Permalink to this definition"></a></dt>
+<dd><p>Delete all cookies for the current session.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.session">
+<span class="sig-name descname"><span class="pre">session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cookies.pkl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.session" title="Permalink to this definition"></a></dt>
+<dd><p>Save and load session cookies to and from a specified file path.
+If file path doesn’t exist, it saves the current session cookies to the specified path.
+Otherwise, it loads the session cookies from the specified path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – The file path to save or load the session cookies from. Default is “cookies.pkl”</p></li>
+<li><p><strong>prompt</strong> (<em>bool</em>) – Prompts the user to press enter before saving session cookies. Default is False</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.screenshot">
+<span class="sig-name descname"><span class="pre">screenshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'screenshot.png'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.screenshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.screenshot" title="Permalink to this definition"></a></dt>
+<dd><p>Saves a screenshot of the current window to a PNG image file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – The file path to save the screenshot. Default is “screenshot.png”</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns False if there is any IOError, else returns True.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Goes forward in browser history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.back">
+<span class="sig-name descname"><span class="pre">back</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.back"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.back" title="Permalink to this definition"></a></dt>
+<dd><p>Goes back in browser history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.maximize">
+<span class="sig-name descname"><span class="pre">maximize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.maximize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.maximize" title="Permalink to this definition"></a></dt>
+<dd><p>Maximize the current window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.minimize" title="Permalink to this definition"></a></dt>
+<dd><p>Minimize the current window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.fullscreen">
+<span class="sig-name descname"><span class="pre">fullscreen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.fullscreen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.fullscreen" title="Permalink to this definition"></a></dt>
+<dd><p>Make the current window fullscreen.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.set_page_load_timeout">
+<span class="sig-name descname"><span class="pre">set_page_load_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.set_page_load_timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.set_page_load_timeout" title="Permalink to this definition"></a></dt>
+<dd><p>Set the timeout for page load.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time</strong> – timeout in seconds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.set_window_position">
+<span class="sig-name descname"><span class="pre">set_window_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.set_window_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.set_window_position" title="Permalink to this definition"></a></dt>
+<dd><p>Set the position of the current window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – The x position of the window</p></li>
+<li><p><strong>y</strong> – The y position of the window</p></li>
+<li><p><strong>window_handle</strong> – The window handle to set the position of. If None, set the position of the current window.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>containing x and y position of the window</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get_window_position">
+<span class="sig-name descname"><span class="pre">get_window_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.get_window_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get_window_position" title="Permalink to this definition"></a></dt>
+<dd><p>Get the position of the current window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>window_handle</strong> – The window handle to get the position of. If None, get the position of the current window.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>containing x and y position of the window</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get_window_size">
+<span class="sig-name descname"><span class="pre">get_window_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.get_window_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get_window_size" title="Permalink to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Get the size of the browser window.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>window_handle</strong> – The window handle to get the size of. If None, get the size of the current window.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the width and height of the browser window.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.set_window_size">
+<span class="sig-name descname"><span class="pre">set_window_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_handle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.set_window_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.set_window_size" title="Permalink to this definition"></a></dt>
+<dd><p>Set the size of a browser window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> – The width of the browser window.</p></li>
+<li><p><strong>height</strong> – The height of the browser window.</p></li>
+<li><p><strong>window_handle</strong> – The window handle to set the size of. If None, sets the size of the current window.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.get_window_geometry">
+<span class="sig-name descname"><span class="pre">get_window_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.get_window_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.get_window_geometry" title="Permalink to this definition"></a></dt>
+<dd><p>Get the geometry of the browser window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the x, y, width and height of the browser window.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.driver.Selench.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/selench/driver.html#Selench.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.driver.Selench.quit" title="Permalink to this definition"></a></dt>
+<dd><p>Close all windows and quit the browser.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-selench.wait_for">
+<span id="selench-wait-for-module"></span><h2>selench.wait_for module<a class="headerlink" href="#module-selench.wait_for" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">selench.wait_for.</span></span><span class="sig-name descname"><span class="pre">WaitFor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">driver</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class provides methods for waiting for certain conditions to be met in a web page
+using Selenium’s WebDriverWait and ExpectedConditions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_clickable">
+<span class="sig-name descname"><span class="pre">element_clickable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_clickable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_clickable" title="Permalink to this definition"></a></dt>
+<dd><p>An Expectation for checking an element is visible and enabled such that you can click it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The clickable element.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not clickable.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_visibility">
+<span class="sig-name descname"><span class="pre">element_visibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_visibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_visibility" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking that an element is present on the DOM of a page and visible.
+Visibility means that the element is not only displayed but also has a height and width
+that is greater than 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The located and visible element.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not visible within the given timeout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.elements_visibility">
+<span class="sig-name descname"><span class="pre">elements_visibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">WebElement</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.elements_visibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.elements_visibility" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking that all elements are present on the DOM of a page and visible.
+Visibility means that the elements are not only displayed but also has a height and width
+that is greater than 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the elements to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of located and visible elements.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element are not visible within the given timeout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_invisibility">
+<span class="sig-name descname"><span class="pre">element_invisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_invisibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_invisibility" title="Permalink to this definition"></a></dt>
+<dd><p>An Expectation for checking that an element is either invisible or not present on the DOM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The invisible element.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not invisible within the given timeout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.elements_invisibility">
+<span class="sig-name descname"><span class="pre">elements_invisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">WebElement</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.elements_invisibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.elements_invisibility" title="Permalink to this definition"></a></dt>
+<dd><p>An Expectation for checking that elements are either invisible or not present on the DOM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the elements to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of invisible elements.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the elements are not invisible within the given timeout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_staleness">
+<span class="sig-name descname"><span class="pre">element_staleness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebElement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_staleness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_staleness" title="Permalink to this definition"></a></dt>
+<dd><p>Wait until an element is no longer attached to the DOM. element is the element to wait for.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The WebElement to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the element is no longer attached to the DOM.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not stale.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_text">
+<span class="sig-name descname"><span class="pre">element_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_text" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking if text is present in the specified element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if text is present in the element.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element does not contain text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_text_to_include">
+<span class="sig-name descname"><span class="pre">element_text_to_include</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_text_to_include"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_text_to_include" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking if the given text is present in the specified element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element.</p></li>
+<li><p><strong>text</strong> – The text to search for in the selected element’s text.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if text is present in the element.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element does not contain text.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_text_to_be</span><span class="p">(</span><span class="s1">&#39;//div[@id=&quot;msg&quot;]&#39;</span><span class="p">,</span> <span class="s1">&#39;welcome&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_attribute_text_to_include">
+<span class="sig-name descname"><span class="pre">element_attribute_text_to_include</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_attribute_text_to_include"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_attribute_text_to_include" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking if the given text is present in the element’s attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element.</p></li>
+<li><p><strong>attribute</strong> – The name of the attribute to check for the presence of the given text.</p></li>
+<li><p><strong>text</strong> – The text to search for in the selected element’s attribute.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if text is present in the attribute.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element’s attribute does not contain text.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_attribute_text_to_include</span><span class="p">(</span><span class="s1">&#39;//div[@id=&quot;msg&quot;]&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;new message&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_selection_state">
+<span class="sig-name descname"><span class="pre">element_selection_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_selected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_selection_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_selection_state" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation to locate an element and check if the selection state specified is in that state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element to wait for.</p></li>
+<li><p><strong>is_selected</strong> – True for checked False otherwise.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the selection state specified is in that state.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – if the selection state specified is not in that state.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_selection_state</span><span class="p">(</span><span class="s1">&#39;input[type=&quot;checkbox&quot;]&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.element_presence">
+<span class="sig-name descname"><span class="pre">element_presence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebElement</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.element_presence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.element_presence" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking that an element is present on the DOM of a page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selector</strong> – The selector of the element to wait for.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The DOM present element.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the element is not present on the DOM.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.url_to_be">
+<span class="sig-name descname"><span class="pre">url_to_be</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.url_to_be"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.url_to_be" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking the current url is the expected url, which must be an exact match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – The expected url.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the current url is the expected url.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – if current url is not the expected url.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.url_to_include">
+<span class="sig-name descname"><span class="pre">url_to_include</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.url_to_include"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.url_to_include" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking that the current url contains a case-sensitive substring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> – The expected case-sensitive substring.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the current url contains the string.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – if the current url does not contain the string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.title_to_be">
+<span class="sig-name descname"><span class="pre">title_to_be</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.title_to_be"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.title_to_be" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking the title of a page. title is the expected title, which must be an exact match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – The expected title.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the title matches.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – if the title doesn’t match.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selench.wait_for.WaitFor.title_to_contain">
+<span class="sig-name descname"><span class="pre">title_to_contain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/selench/wait_for.html#WaitFor.title_to_contain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#selench.wait_for.WaitFor.title_to_contain" title="Permalink to this definition"></a></dt>
+<dd><p>An expectation for checking that the title contains a case-sensitive substring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> – The expected case-sensitive substring.</p></li>
+<li><p><strong>timeout</strong> – Maximum time to wait in seconds. Default is None, which means use the default wait time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the current title contains the string.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – if the current title does not contain the string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-selench">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-selench" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="selench" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, dsymbol.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

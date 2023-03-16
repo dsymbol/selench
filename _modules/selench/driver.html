@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>selench.driver &mdash; selench  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            selench
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">selench</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">selench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">selench.driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for selench.driver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Main module that holds all the methods to interact with the browser.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    from selench import Selench, Keys</span>
+
+<span class="sd">    driver = Selench()</span>
+<span class="sd">    driver.get(&#39;https://google.com&#39;)</span>
+<span class="sd">    driver.element(&#39;input[name=&quot;q&quot;]&#39;).send_keys(&#39;Hello World!&#39;, Keys.ENTER)</span>
+<span class="sd">    driver.quit()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">TimeoutException</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver</span> <span class="kn">import</span> <span class="n">ActionChains</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.alert</span> <span class="kn">import</span> <span class="n">Alert</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.by</span> <span class="kn">import</span> <span class="n">By</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.remote.webelement</span> <span class="kn">import</span> <span class="n">WebElement</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span> <span class="k">as</span> <span class="n">ec</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.select</span> <span class="kn">import</span> <span class="n">Select</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.wait</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+
+<span class="kn">from</span> <span class="nn">.browser</span> <span class="kn">import</span> <span class="n">Browser</span>
+<span class="kn">from</span> <span class="nn">.wait_for</span> <span class="kn">import</span> <span class="n">WaitFor</span>
+
+
+<div class="viewcode-block" id="Selench"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench">[docs]</a><span class="k">class</span> <span class="nc">Selench</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the main class that holds all the methods to interact with the browser.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        browser: The browser to use.</span>
+<span class="sd">        wait: The default explicit wait time for WebDriverWait.</span>
+<span class="sd">        executable_path: The path to the driver executable.</span>
+<span class="sd">        headless: Run browser in headless mode.</span>
+<span class="sd">        user_agent: The user agent to use.</span>
+<span class="sd">        incognito: Run browser in incognito mode.</span>
+<span class="sd">        binary_location: The location of the browser executable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">browser</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;chrome&quot;</span><span class="p">,</span> <span class="s2">&quot;firefox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;chrome&quot;</span><span class="p">,</span>
+            <span class="n">wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">executable_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">headless</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">incognito</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">binary_location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_webdriver</span> <span class="o">=</span> <span class="n">Browser</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">executable_path</span><span class="p">,</span> <span class="n">headless</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">,</span> <span class="n">incognito</span><span class="p">,</span>
+                                  <span class="n">binary_location</span><span class="p">)</span><span class="o">.</span><span class="n">create_driver</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span> <span class="o">=</span> <span class="n">wait</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for</span> <span class="o">=</span> <span class="n">WaitFor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">webdriver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This property provides access to the underlying webdriver instance.</span>
+<span class="sd">        Can be used to access webdriver&#39;s methods and properties that are not yet implemented in this package.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            webdriver instance</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.webdriver.get(&quot;https://www.google.com&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_webdriver</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaitFor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This property provides access to the WaitFor class, which contains explicit wait functions.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.wait_for.element_visibility(&#39;input&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for</span>
+
+<div class="viewcode-block" id="Selench.css_element"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.css_element">[docs]</a>    <span class="k">def</span> <span class="nf">css_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the first matching element on a page by its CSS selector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The CSS selector for the element.</span>
+<span class="sd">            timeout: The time to wait for the element to be found. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The found WebElement.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not found.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            element = driver.css_element(&#39;#content&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="n">selector</span><span class="p">),</span>
+                                                               <span class="sa">f</span><span class="s2">&quot;Could not find element with the CSS `</span><span class="si">{</span><span class="n">selector</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="Selench.css_elements"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.css_elements">[docs]</a>    <span class="k">def</span> <span class="nf">css_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">WebElement</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find multiple elements on the page by their CSS selector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The CSS selector for the elements.</span>
+<span class="sd">            timeout: The time to wait for the elements to be found. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the found WebElements. If no elements are found, an empty list is returned.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            elements = driver.css_elements(&#39;#content&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="n">selector</span><span class="p">),</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not find elements with the CSS `</span><span class="si">{</span><span class="n">selector</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">TimeoutException</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">elements</span></div>
+
+<div class="viewcode-block" id="Selench.xpath_element"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.xpath_element">[docs]</a>    <span class="k">def</span> <span class="nf">xpath_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the first matching element on a page by its XPATH selector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The XPATH selector for the element.</span>
+<span class="sd">            timeout: The time to wait for the element to be found. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The found WebElement.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not found.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            element = driver.xpath_element(&#39;//div&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span> <span class="n">selector</span><span class="p">),</span>
+                                                               <span class="sa">f</span><span class="s2">&quot;Could not find element with the XPATH `</span><span class="si">{</span><span class="n">selector</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="Selench.xpath_elements"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.xpath_elements">[docs]</a>    <span class="k">def</span> <span class="nf">xpath_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">WebElement</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find multiple elements on the page by their XPATH selector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The XPATH selector for the elements.</span>
+<span class="sd">            timeout: The time to wait for the elements to be found. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the found WebElements. If no elements are found, an empty list is returned.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            elements = driver.xpath_elements(&#39;//div&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span> <span class="n">selector</span><span class="p">),</span>
+                                                                    <span class="sa">f</span><span class="s2">&quot;Could not find elements with the XPATH `</span><span class="si">{</span><span class="n">selector</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">TimeoutException</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">elements</span></div>
+
+<div class="viewcode-block" id="Selench.element"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.element">[docs]</a>    <span class="k">def</span> <span class="nf">element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identifies the type of the provided selector and find the first matching element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector for the element.</span>
+<span class="sd">            timeout: The time to wait for the element to be found. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The found WebElement.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not found.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            # Would detect that #content is a CSS selector and return a CSS element</span>
+<span class="sd">            element = driver.element(&#39;#content&#39;)</span>
+
+<span class="sd">            # Would detect that //div is not a CSS selector and return an XPath element</span>
+<span class="sd">            element = driver.element(&#39;//div&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="o">*</span><span class="n">locator</span><span class="p">),</span>
+                                                               <span class="sa">f</span><span class="s2">&quot;Could not find element with the </span><span class="si">{</span><span class="n">locator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="Selench.elements"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.elements">[docs]</a>    <span class="k">def</span> <span class="nf">elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">WebElement</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identifies the type of the provided selector and find a list of matching element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector for the element.</span>
+<span class="sd">            timeout: The time to wait for the elements to be found. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of the found WebElements. If no elements are found, an empty list is returned.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            # Would detect that #content is a CSS selector and return a list of CSS elements</span>
+<span class="sd">            elements = driver.elements(&#39;#content&#39;)</span>
+
+<span class="sd">            # Would detect that //div is not a CSS selector and return a list of XPath elements</span>
+<span class="sd">            elements = driver.elements(&#39;//div&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="o">*</span><span class="n">locator</span><span class="p">),</span>
+                                                                    <span class="sa">f</span><span class="s2">&quot;Could not find elements with the </span><span class="si">{</span><span class="n">locator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">TimeoutException</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">elements</span></div>
+
+<div class="viewcode-block" id="Selench.click"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.click">[docs]</a>    <span class="k">def</span> <span class="nf">click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clicks on an element on the webpage using the given selector.</span>
+<span class="sd">        Waits for the element to be clickable before clicking.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: selector of the element to be clicked</span>
+<span class="sd">            timeout: maximum time to wait for the element to be clicked. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.click(&#39;#button&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_clickable</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.send_keys"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.send_keys">[docs]</a>    <span class="k">def</span> <span class="nf">send_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends keys to an element on the webpage using the given selector.</span>
+<span class="sd">        Waits for the element to be visible and enabled before sending keys.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: selector of the element to send keys to</span>
+<span class="sd">            *values: keys to be sent to the element</span>
+<span class="sd">            timeout: maximum time to wait for the keys to be sent. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            from selench import Keys</span>
+
+<span class="sd">            driver.send_keys(&#39;textarea&#39;, &#39;Hello World&#39;, Keys.ENTER)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_clickable</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The default explicit wait time for WebDriverWait.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Wait time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait</span>
+
+    <span class="nd">@wait</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wait cannot be negative&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait</span> <span class="o">=</span> <span class="n">w</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the title of the current page.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the url of the current page.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">current_url</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the user agent of the current browser instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_js</span><span class="p">(</span><span class="s2">&quot;return navigator.userAgent;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">user_agent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">browser</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the name of the browser instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_window_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the handle of the current window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">current_window_handle</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">all_window_handles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all window handles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">window_handles</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of log types available to the webdriver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">log_types</span>
+
+    <span class="k">def</span> <span class="nf">_detect_locator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detects if selector is CSS and returns a CSS locator otherwise returns a XPath locator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_css</span><span class="p">(</span><span class="n">selector</span><span class="p">):</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="n">selector</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="p">(</span><span class="n">By</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span> <span class="n">selector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">locator</span>
+
+    <span class="k">def</span> <span class="nf">_is_css</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        const queryCheck = (s) =&gt; document.createDocumentFragment().querySelector(s)</span>
+<span class="s2">        </span>
+<span class="s2">        const isSelectorValid = (selector) =&gt; {</span>
+<span class="s2">          try { queryCheck(selector) } catch { return false }</span>
+<span class="s2">          return true</span>
+<span class="s2">        }    </span>
+<span class="s2">        </span>
+<span class="s2">        return isSelectorValid(arguments[0])</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_js</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">selector</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Selench.clear"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears the text of an element on the webpage using the given selector.</span>
+<span class="sd">        Waits for the element to be visible and enabled before clearing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: selector of the element to be cleared</span>
+<span class="sd">            timeout: maximum time to wait for the element to be cleared. Default is None, which means use the default wait time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for</span><span class="o">.</span><span class="n">element_clickable</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.hover"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.hover">[docs]</a>    <span class="k">def</span> <span class="nf">hover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move the mouse cursor over the provided web element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: The web element to hover over.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">move_to_element</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.double_click"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.double_click">[docs]</a>    <span class="k">def</span> <span class="nf">double_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a double click on the provided web element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: The web element to perform the double click on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">double_click</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.right_click"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.right_click">[docs]</a>    <span class="k">def</span> <span class="nf">right_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a right click on the provided web element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: The web element to perform the right click on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">context_click</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.scroll_to_element"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.scroll_to_element">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_to_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scroll the page to the provided web element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: The web element to scroll to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">scroll_to_element</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.scroll_amount"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.scroll_amount">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scroll the page by a specified amount in the x and y directions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: The amount to scroll in the horizontal direction. Negative values scroll left, positive values scroll right.</span>
+<span class="sd">            y: The amount to scroll in the vertical direction. Negative values scroll up, positive values scroll down.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">scroll_by_amount</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.scroll_to_page_bottom"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.scroll_to_page_bottom">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_to_page_bottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scroll the page to the bottom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">execute_js</span><span class="p">(</span><span class="s1">&#39;window.scrollTo(0, document.body.scrollHeight)&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.drag_and_drop"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.drag_and_drop">[docs]</a>    <span class="k">def</span> <span class="nf">drag_and_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">draggable</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">,</span> <span class="n">droppable</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a drag and drop action on the provided web elements.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            draggable: The web element to be dragged.</span>
+<span class="sd">            droppable: The web element to be dropped on.</span>
+<span class="sd">            alternative: Whether to use an alternative method for the drag and drop action. Default is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">alternative</span><span class="p">:</span>
+            <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">click_and_hold</span><span class="p">(</span><span class="n">draggable</span><span class="p">)</span><span class="o">.</span><span class="n">move_to_element</span><span class="p">(</span><span class="n">droppable</span><span class="p">)</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span>
+            <span class="n">ActionChains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">)</span><span class="o">.</span><span class="n">release</span><span class="p">()</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;js&#39;</span><span class="p">,</span> <span class="s1">&#39;drag_and_drop.js&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">javascript</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">execute_js</span><span class="p">(</span><span class="n">javascript</span><span class="p">,</span> <span class="n">draggable</span><span class="p">,</span> <span class="n">droppable</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.select_element"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.select_element">[docs]</a>    <span class="k">def</span> <span class="nf">select_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_or_selector</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WebElement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Select</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a web element to a Select object. The Select object provides a convenient way to interact with</span>
+<span class="sd">        select elements (drop-down lists) on a webpage. It allows the user to select one or more options from the list,</span>
+<span class="sd">        and also provides methods to retrieve the selected options, as well as other useful information about the select element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element_or_selector: The web element or selector to convert to a Select object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Select: The converted Select object.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            element = driver.css_element(&#39;select&#39;)</span>
+<span class="sd">            select_object = driver.select_element(element)</span>
+
+<span class="sd">            # Select an &lt;option&gt; based upon the &lt;select&gt; element&#39;s internal index</span>
+<span class="sd">            select_object.select_by_index(1)</span>
+
+<span class="sd">            # Select an &lt;option&gt; based upon its value attribute</span>
+<span class="sd">            select_object.select_by_value(&#39;value1&#39;)</span>
+
+<span class="sd">            # Select an &lt;option&gt; based upon its text</span>
+<span class="sd">            select_object.select_by_visible_text(&#39;Bread&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element_or_selector</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">element_or_selector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element</span><span class="p">(</span><span class="n">element_or_selector</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element_or_selector</span><span class="p">,</span> <span class="n">WebElement</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported variable type &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">element_or_selector</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">Select</span><span class="p">(</span><span class="n">element_or_selector</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.execute_js"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.execute_js">[docs]</a>    <span class="k">def</span> <span class="nf">execute_js</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute a JavaScript script on the current page.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            script: The JavaScript script to execute.</span>
+<span class="sd">            *args: Any additional arguments to pass to the script.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The return value of the script, if any.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            # get title of current page</span>
+<span class="sd">            title = driver.execute_js(&#39;return document.title;&#39;)</span>
+<span class="sd">            # click an element with an id of content</span>
+<span class="sd">            driver.execute_js(&#39;document.querySelector(&#39;#content&#39;).click()&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.get_page_source"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get_page_source">[docs]</a>    <span class="k">def</span> <span class="nf">get_page_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the entire HTML source of the current page.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The HTML source of the current page.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">page_source</span></div>
+
+<div class="viewcode-block" id="Selench.get_log"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get_log">[docs]</a>    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the log for a specific log type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            log_type: The type of log to retrieve. Use the log_types attribute to get a list of available log types.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of log entries for the specified log type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get_log</span><span class="p">(</span><span class="n">log_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.new_window"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.new_window">[docs]</a>    <span class="k">def</span> <span class="nf">new_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a new browser window.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout: The time to wait for the new window to open. Default is None, which means use the default wait time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">expected_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_window_handles</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="s2">&quot;window&quot;</span><span class="p">)</span>
+        <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">number_of_windows_to_be</span><span class="p">(</span><span class="n">expected_number</span><span class="p">),</span>
+                                                     <span class="s2">&quot;Number of windows is not equal to expected number &quot;</span>
+                                                     <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">expected_number</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.new_tab"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.new_tab">[docs]</a>    <span class="k">def</span> <span class="nf">new_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a new browser tab.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout: The time to wait for the new tab to open. Default is None, which means use the default wait time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">expected_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_window_handles</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="s2">&quot;tab&quot;</span><span class="p">)</span>
+        <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">number_of_windows_to_be</span><span class="p">(</span><span class="n">expected_number</span><span class="p">),</span>
+                                                     <span class="s2">&quot;Number of windows is not equal to expected number &quot;</span>
+                                                     <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">expected_number</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.switch_window"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.switch_window">[docs]</a>    <span class="k">def</span> <span class="nf">switch_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch focus to a different browser window or tab.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the window or tab to switch to.</span>
+<span class="sd">            index: The index of the window or tab to switch to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">handle_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_window_handles</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="n">handle_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.switch_frame"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.switch_frame">[docs]</a>    <span class="k">def</span> <span class="nf">switch_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch the focus of future commands to the frame identified by its selector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector for the frame.</span>
+<span class="sd">            timeout: The time to wait for the frame to be available. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the frame was found and switched to</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the frame is not found.</span>
+
+<span class="sd">        Example::</span>
+<span class="sd">            driver.switch_frame(&quot;iframe[id=ifr]&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">frame_to_be_available_and_switch_to_it</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span>
+                                                             <span class="s2">&quot;Frame is not available&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">frame</span></div>
+
+<div class="viewcode-block" id="Selench.parent_frame"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.parent_frame">[docs]</a>    <span class="k">def</span> <span class="nf">parent_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch to the parent frame of the current frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">parent_frame</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.leave_frame"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.leave_frame">[docs]</a>    <span class="k">def</span> <span class="nf">leave_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exit all frames and switch to the default content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">default_content</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.alert"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.alert">[docs]</a>    <span class="k">def</span> <span class="nf">alert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Alert</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the alert box that is currently open.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout: The time to wait for the alert to appear. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The alert box that is currently open.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TimeoutException: If the alert is not present within the specified timeout.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            alert = driver.alert()</span>
+<span class="sd">            alert.accept()</span>
+<span class="sd">            alert.dismiss()</span>
+<span class="sd">            alert.send_keys(&#39;foo&#39;)</span>
+<span class="sd">            print(alert.text)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">alert</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">alert_is_present</span><span class="p">(),</span> <span class="s2">&quot;No alerts are present&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">alert</span></div>
+
+<div class="viewcode-block" id="Selench.basic_auth"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.basic_auth">[docs]</a>    <span class="k">def</span> <span class="nf">basic_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform basic URL authentication.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: The URL to access, must include protocol (e.g. https://)</span>
+<span class="sd">            username: The username for the authentication.</span>
+<span class="sd">            password: The password for the authentication.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.basic_auth(&quot;https://example.com&quot;, &quot;username&quot;, &quot;password&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;//</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">password</span><span class="si">}</span><span class="s1">@&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_url</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.get"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Navigates to the specified URL.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: The URL to navigate to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.refresh"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refresh the current page.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.close"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Closes the current window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.get_all_cookies"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get_all_cookies">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_cookies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all cookies of the current session.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of dictionaries, with each dictionary representing a cookie.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get_cookies</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.add_cookie"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.add_cookie">[docs]</a>    <span class="k">def</span> <span class="nf">add_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a cookie to the current session.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cookie_dict: A dictionary representing the cookie, with keys &quot;name&quot; and &quot;value&quot;.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.add_cookie({&quot;name&quot; : &quot;foo&quot;, &quot;value&quot; : &quot;bar&quot;})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">add_cookie</span><span class="p">(</span><span class="n">cookie_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.delete_cookie"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.delete_cookie">[docs]</a>    <span class="k">def</span> <span class="nf">delete_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a specific cookie by name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the cookie to be deleted.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.delete_cookie(&quot;foo&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.delete_all_cookies"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.delete_all_cookies">[docs]</a>    <span class="k">def</span> <span class="nf">delete_all_cookies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete all cookies for the current session.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">delete_all_cookies</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.session"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.session">[docs]</a>    <span class="k">def</span> <span class="nf">session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cookies.pkl&quot;</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save and load session cookies to and from a specified file path.</span>
+<span class="sd">        If file path doesn&#39;t exist, it saves the current session cookies to the specified path.</span>
+<span class="sd">        Otherwise, it loads the session cookies from the specified path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): The file path to save or load the session cookies from. Default is &quot;cookies.pkl&quot;</span>
+<span class="sd">            prompt (bool): Prompts the user to press enter before saving session cookies. Default is False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">cookies</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add_cookie</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span> <span class="k">for</span> <span class="n">cookie</span> <span class="ow">in</span> <span class="n">cookies</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prompt</span><span class="p">:</span>
+                <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press ENTER once ready to save the session&quot;</span><span class="p">)</span>
+            <span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_cookies</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cookies</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.screenshot"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.screenshot">[docs]</a>    <span class="k">def</span> <span class="nf">screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;screenshot.png&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves a screenshot of the current window to a PNG image file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: The file path to save the screenshot. Default is &quot;screenshot.png&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Returns False if there is any IOError, else returns True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">save_screenshot</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.forward"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Goes forward in browser history.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.back"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.back">[docs]</a>    <span class="k">def</span> <span class="nf">back</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Goes back in browser history.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">back</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.maximize"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maximize the current window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">maximize_window</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.minimize"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Minimize the current window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">minimize_window</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.fullscreen"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.fullscreen">[docs]</a>    <span class="k">def</span> <span class="nf">fullscreen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current window fullscreen.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">fullscreen_window</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.set_page_load_timeout"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.set_page_load_timeout">[docs]</a>    <span class="k">def</span> <span class="nf">set_page_load_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the timeout for page load.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time: timeout in seconds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">set_page_load_timeout</span><span class="p">(</span><span class="n">time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.set_window_position"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.set_window_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">window_handle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the position of the current window.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: The x position of the window</span>
+<span class="sd">            y: The y position of the window</span>
+<span class="sd">            window_handle: The window handle to set the position of. If None, set the position of the current window.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict : containing x and y position of the window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">set_window_position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">windowHandle</span><span class="o">=</span><span class="n">window_handle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.get_window_position"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get_window_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_handle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the position of the current window.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window_handle: The window handle to get the position of. If None, get the position of the current window.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict : containing x and y position of the window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get_window_position</span><span class="p">(</span><span class="n">windowHandle</span><span class="o">=</span><span class="n">window_handle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.get_window_size"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get_window_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_handle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Get the size of the browser window.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window_handle:The window handle to get the size of. If None, get the size of the current window.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing the width and height of the browser window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get_window_size</span><span class="p">(</span><span class="n">windowHandle</span><span class="o">=</span><span class="n">window_handle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.set_window_size"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.set_window_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">window_handle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the size of a browser window.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            width: The width of the browser window.</span>
+<span class="sd">            height: The height of the browser window.</span>
+<span class="sd">            window_handle:The window handle to set the size of. If None, sets the size of the current window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">set_window_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">windowHandle</span><span class="o">=</span><span class="n">window_handle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selench.get_window_geometry"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.get_window_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the geometry of the browser window.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing the x, y, width and height of the browser window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">get_window_rect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Selench.quit"><a class="viewcode-back" href="../../selench.html#selench.driver.Selench.quit">[docs]</a>    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close all windows and quit the browser.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webdriver</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, dsymbol.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

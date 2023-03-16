@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>selench.wait_for &mdash; selench  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            selench
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">selench</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">selench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">selench.wait_for</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for selench.wait_for</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">selenium.common</span> <span class="kn">import</span> <span class="n">StaleElementReferenceException</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.remote.webelement</span> <span class="kn">import</span> <span class="n">WebElement</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span> <span class="k">as</span> <span class="n">ec</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.wait</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+
+
+<div class="viewcode-block" id="WaitFor"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor">[docs]</a><span class="k">class</span> <span class="nc">WaitFor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class provides methods for waiting for certain conditions to be met in a web page</span>
+<span class="sd">    using Selenium&#39;s WebDriverWait and ExpectedConditions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">driver</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">driver</span>
+
+<div class="viewcode-block" id="WaitFor.element_clickable"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_clickable">[docs]</a>    <span class="k">def</span> <span class="nf">element_clickable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An Expectation for checking an element is visible and enabled such that you can click it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The clickable element.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not clickable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">element_to_be_clickable</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span>
+                                                                       <span class="s2">&quot;Element is not clickable&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_visibility"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_visibility">[docs]</a>    <span class="k">def</span> <span class="nf">element_visibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking that an element is present on the DOM of a page and visible.</span>
+<span class="sd">        Visibility means that the element is not only displayed but also has a height and width</span>
+<span class="sd">        that is greater than 0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The located and visible element.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not visible within the given timeout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">visibility_of_element_located</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span>
+                                                                       <span class="s2">&quot;Element is not visible&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.elements_visibility"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.elements_visibility">[docs]</a>    <span class="k">def</span> <span class="nf">elements_visibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">WebElement</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking that all elements are present on the DOM of a page and visible.</span>
+<span class="sd">        Visibility means that the elements are not only displayed but also has a height and width</span>
+<span class="sd">        that is greater than 0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the elements to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of located and visible elements.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element are not visible within the given timeout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">visibility_of_all_elements_located</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span>
+                                                                        <span class="s2">&quot;Not all elements are visible&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">elements</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_invisibility"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_invisibility">[docs]</a>    <span class="k">def</span> <span class="nf">element_invisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An Expectation for checking that an element is either invisible or not present on the DOM.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The invisible element.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not invisible within the given timeout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">invisibility_of_element_located</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span>
+                                                                       <span class="s2">&quot;Element is not invisible&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.elements_invisibility"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.elements_invisibility">[docs]</a>    <span class="k">def</span> <span class="nf">elements_invisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">WebElement</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An Expectation for checking that elements are either invisible or not present on the DOM.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the elements to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of invisible elements.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the elements are not invisible within the given timeout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visibility_of_all_elements_located</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span> <span class="s2">&quot;Elements are not invisible&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">elements</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_staleness"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_staleness">[docs]</a>    <span class="k">def</span> <span class="nf">element_staleness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait until an element is no longer attached to the DOM. element is the element to wait for.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: The WebElement to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the element is no longer attached to the DOM.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not stale.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">staleness_of</span><span class="p">(</span><span class="n">element</span><span class="p">),</span>
+                                                                       <span class="s2">&quot;Element did not go stale&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_text"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_text">[docs]</a>    <span class="k">def</span> <span class="nf">element_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking if text is present in the specified element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if text is present in the element.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element does not contain text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="o">*</span><span class="n">locator</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
+                                                                       <span class="s2">&quot;No text in element&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_text_to_include"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_text_to_include">[docs]</a>    <span class="k">def</span> <span class="nf">element_text_to_include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking if the given text is present in the specified element.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element.</span>
+<span class="sd">            text: The text to search for in the selected element&#39;s text.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if text is present in the element.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element does not contain text.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.wait_for.element_text_to_be(&#39;//div[@id=&quot;msg&quot;]&#39;, &#39;welcome&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">text_to_be_present_in_element</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">text</span><span class="p">),</span>
+                                                                       <span class="sa">f</span><span class="s2">&quot;Element text is not `</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_attribute_text_to_include"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_attribute_text_to_include">[docs]</a>    <span class="k">def</span> <span class="nf">element_attribute_text_to_include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking if the given text is present in the element’s attribute.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element.</span>
+<span class="sd">            attribute: The name of the attribute to check for the presence of the given text.</span>
+<span class="sd">            text: The text to search for in the selected element&#39;s attribute.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if text is present in the attribute.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element&#39;s attribute does not contain text.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.wait_for.element_attribute_text_to_include(&#39;//div[@id=&quot;msg&quot;]&#39;, &#39;value&#39;, &#39;new message&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">text_to_be_present_in_element_attribute</span><span class="p">(</span>
+            <span class="n">locator</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">text</span><span class="p">),</span> <span class="s2">&quot;Text is not present in attribute&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_selection_state"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_selection_state">[docs]</a>    <span class="k">def</span> <span class="nf">element_selection_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_selected</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation to locate an element and check if the selection state specified is in that state.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element to wait for.</span>
+<span class="sd">            is_selected: True for checked False otherwise.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the selection state specified is in that state.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if the selection state specified is not in that state.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            driver.wait_for.element_selection_state(&#39;input[type=&quot;checkbox&quot;]&#39;, False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span>
+            <span class="n">ec</span><span class="o">.</span><span class="n">element_located_selection_state_to_be</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">is_selected</span><span class="p">),</span>
+            <span class="s2">&quot;Element is not selected&quot;</span> <span class="k">if</span> <span class="n">is_selected</span> <span class="k">else</span> <span class="s2">&quot;Element is selected&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.element_presence"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.element_presence">[docs]</a>    <span class="k">def</span> <span class="nf">element_presence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking that an element is present on the DOM of a page.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector: The selector of the element to wait for.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The DOM present element.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the element is not present on the DOM.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_detect_locator_type</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">presence_of_element_located</span><span class="p">(</span><span class="n">locator</span><span class="p">),</span>
+                                                                       <span class="s2">&quot;Element is not present on the DOM&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.url_to_be"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.url_to_be">[docs]</a>    <span class="k">def</span> <span class="nf">url_to_be</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking the current url is the expected url, which must be an exact match.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: The expected url.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the current url is the expected url.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if current url is not the expected url.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">url_to_be</span><span class="p">(</span><span class="n">url</span><span class="p">),</span>
+                                                                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.url_to_include"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.url_to_include">[docs]</a>    <span class="k">def</span> <span class="nf">url_to_include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking that the current url contains a case-sensitive substring.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string: The expected case-sensitive substring.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the current url contains the string.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if the current url does not contain the string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">url_contains</span><span class="p">(</span><span class="n">string</span><span class="p">),</span>
+                                                                       <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">` does not contain `</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.title_to_be"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.title_to_be">[docs]</a>    <span class="k">def</span> <span class="nf">title_to_be</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking the title of a page. title is the expected title, which must be an exact match.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            title: The expected title.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the title matches.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if the title doesn&#39;t match.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">title_is</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
+                                                                       <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<div class="viewcode-block" id="WaitFor.title_to_contain"><a class="viewcode-back" href="../../selench.html#selench.wait_for.WaitFor.title_to_contain">[docs]</a>    <span class="k">def</span> <span class="nf">title_to_contain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An expectation for checking that the title contains a case-sensitive substring.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string: The expected case-sensitive substring.</span>
+<span class="sd">            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the current title contains the string.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if the current title does not contain the string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">wait</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">ec</span><span class="o">.</span><span class="n">title_contains</span><span class="p">(</span><span class="n">string</span><span class="p">),</span>
+                                                                       <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">` does not contain `</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span></div>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     * Custom &quot;Expected Conditions&quot; *</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_visibility_of_all_elements_located</span><span class="p">(</span><span class="n">locator</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">_predicate</span><span class="p">(</span><span class="n">driver</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">elements</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_elements</span><span class="p">(</span><span class="o">*</span><span class="n">locator</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">is_displayed</span><span class="p">():</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="n">elements</span>
+            <span class="k">except</span> <span class="n">StaleElementReferenceException</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">_predicate</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, dsymbol.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
