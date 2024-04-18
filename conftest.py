@@ -5,6 +5,6 @@ from selench import Selench
 
 @pytest.fixture
 def driver():
-    driver = Selench()
+    driver = Selench("Edge")
     yield driver
     driver.quit()

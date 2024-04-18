@@ -11,6 +11,7 @@ class WaitFor:
     This class provides methods for waiting for certain conditions to be met in a web page
     using Selenium's WebDriverWait and ExpectedConditions.
     """
+
     def __init__(self, driver):
         self._driver = driver
 
@@ -174,12 +175,37 @@ class WaitFor:
 
         Example::
 
-            driver.wait_for.element_text_to_be('//div[@id="msg"]', 'welcome')
+            driver.wait_for.element_text_to_include('//div[@id="msg"]', 'welcome')
         """
         if not timeout: timeout = self._driver.wait
         locator = self._driver._detect_locator_type(selector)
         element = WebDriverWait(self._driver.webdriver, timeout).until(ec.text_to_be_present_in_element(locator, text),
                                                                        f"Element text is not `{text}`")
+        return element
+
+    def element_text_to_be(self, selector: str, text: str, timeout: int = None) -> bool:
+        """
+        An expectation for checking if the given text exactly matches the text within the specified element.
+
+        Args:
+            selector: The selector of the element.
+            text: The expected text to be present within the element.
+            timeout: Maximum time to wait in seconds. Default is None, which means use the default wait time.
+
+        Returns:
+            True if the text exactly matches the element's text.
+
+        Example::
+
+            driver.wait_for.element_text_to_be('#my-element', 'Hello')
+        """
+
+        if not timeout: timeout = self._driver.wait
+        locator = self._driver._detect_locator_type(selector)
+        element = WebDriverWait(self._driver.webdriver, timeout).until(
+            lambda d: bool(d.find_element(*locator).text == text),
+            message=f"Element text doesn't match {text}"
+        )
         return element
 
     def element_attribute_text_to_include(self, selector: str, attribute: str, text: str, timeout: int = None) -> bool:

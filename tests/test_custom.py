@@ -10,14 +10,6 @@ def test_basic_auth(driver):
     assert 'congratulations' in driver.css_element('div[class=example] p').text.lower()
 
 
-def test_drag_and_drop_alternative(driver):
-    driver.get(f'{shared.INTERNET}/drag_and_drop')
-    drag = driver.css_element('div[id=column-a]')
-    drop = driver.css_element('div[id=column-b]')
-    driver.action.drag_and_drop(drag, drop, alternative=True)
-    assert driver.css_element('div[id=column-a] header').text.lower() == 'b'
-
-
 def test_detect_elements(driver):
     keyword = "husky"
     driver.get(shared.DUCK)

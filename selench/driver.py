@@ -10,21 +10,21 @@ Main module that holds all the methods to interact with the browser.
     driver.element('input[name="q"]').send_keys('Hello World!', Keys.ENTER)
     driver.quit()
 """
+import json
+from pathlib import Path
+from typing import Literal, List, Union
 
-import os
-import pickle
-from typing import List, Literal, Union
-
+from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from .browser import Browser
 from .wait_for import WaitFor
 
 
@@ -33,27 +33,28 @@ class Selench:
     This is the main class that holds all the methods to interact with the browser.
 
     Args:
-        browser: The browser to use.
+        driver: WebDriver instance used to interact with the browser.
         wait: The default explicit wait time for WebDriverWait.
-        executable_path: The path to the driver executable.
-        headless: Run browser in headless mode.
-        user_agent: The user agent to use.
-        incognito: Run browser in incognito mode.
-        binary_location: The location of the browser executable.
     """
 
     def __init__(
             self,
-            browser: Literal["chrome", "firefox"] = "chrome",
+            driver: WebDriver | Literal["Chrome", "Firefox", "Edge"] = "Chrome",
             wait: int = 10,
-            executable_path: str = None,
-            headless: bool = False,
-            user_agent: str = None,
-            incognito: bool = False,
-            binary_location: str = None
-    ):
-        self._webdriver = Browser(browser, executable_path, headless, user_agent, incognito,
-                                  binary_location).create_driver()
+    ) -> None:
+        if isinstance(driver, WebDriver):
+            self._webdriver = driver
+        elif isinstance(driver, str):
+            if driver.lower() == "chrome":
+                self._webdriver = webdriver.Chrome()
+            elif driver.lower() == "firefox":
+                self._webdriver = webdriver.Firefox()
+            elif driver.lower() == "edge":
+                self._webdriver = webdriver.Edge()
+            else:
+                raise Exception("Unknown browser pass as WebDriver object")
+        else:
+            raise Exception("Unknown type passed to driver")
         self.wait = wait
         self._wait_for = WaitFor(self)
 
@@ -418,25 +419,18 @@ class Selench:
         """
         Scroll the page to the bottom.
         """
-        self.driver.execute_js('window.scrollTo(0, document.body.scrollHeight)')
+        self.execute_js('window.scrollTo(0, document.body.scrollHeight)')
 
-    def drag_and_drop(self, draggable: WebElement, droppable: WebElement, alternative=False):
+    def drag_and_drop(self, draggable: WebElement, droppable: WebElement):
         """
         Perform a drag and drop action on the provided web elements.
 
         Args:
             draggable: The web element to be dragged.
             droppable: The web element to be dropped on.
-            alternative: Whether to use an alternative method for the drag and drop action. Default is False.
         """
-        if not alternative:
-            ActionChains(self.webdriver).click_and_hold(draggable).move_to_element(droppable).perform()
-            ActionChains(self.webdriver).release().perform()
-        else:
-            file_path = os.path.join(os.path.dirname(__file__), 'js', 'drag_and_drop.js')
-            with open(file_path, "r") as f:
-                javascript = f.read()
-            self.driver.execute_js(javascript, draggable, droppable)
+        ActionChains(self.webdriver).click_and_hold(draggable).move_to_element(droppable).perform()
+        ActionChains(self.webdriver).release().perform()
 
     def select_element(self, element_or_selector: Union[str, WebElement]) -> Select:
         """
@@ -693,7 +687,7 @@ class Selench:
         """
         self.webdriver.delete_all_cookies()
 
-    def session(self, path: str = "cookies.pkl", prompt=False) -> None:
+    def session(self, path: str = "cookies.json", prompt=False) -> None:
         """
         Save and load session cookies to and from a specified file path.
         If file path doesn't exist, it saves the current session cookies to the specified path.
@@ -703,17 +697,19 @@ class Selench:
             path (str): The file path to save or load the session cookies from. Default is "cookies.pkl"
             prompt (bool): Prompts the user to press enter before saving session cookies. Default is False
         """
-        if os.path.exists(path):
-            with open(path, "rb") as f:
-                cookies = pickle.load(f)
+        path = Path(path).absolute()
+
+        if path.exists():
+            with path.open("r", encoding="utf-8") as f:
+                cookies = json.load(f)
             [self.add_cookie(cookie) for cookie in cookies]
             self.refresh()
         else:
             if prompt:
                 input("Press ENTER once ready to save the session")
             cookies = self.get_all_cookies()
-            with open(path, "wb") as f:
-                pickle.dump(cookies, f)
+            with path.open("w", encoding="utf-8") as f:
+                json.dump(cookies, f, indent=4)
 
     def screenshot(self, path: str = "screenshot.png") -> bool:
         """

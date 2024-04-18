@@ -12,8 +12,8 @@ def test_get_url(driver):
 def test_css_elements(driver):
     keyword = "husky"
     driver.get(shared.DUCK)
-    driver.css_element('#search_form_input_homepage').send_keys(keyword, Keys.ENTER)
-    results = driver.css_elements('div[id=links] article h2 span')
+    driver.css_element('input[placeholder]').send_keys(keyword, Keys.ENTER)
+    results = driver.css_elements('article h2 span')
     for i in results:
         assert keyword in i.text.lower()
 
@@ -21,8 +21,8 @@ def test_css_elements(driver):
 def test_xpath_elements(driver):
     keyword = "shiba"
     driver.get(shared.DUCK)
-    driver.xpath_element('//input[@id="search_form_input_homepage"]').send_keys(keyword, Keys.ENTER)
-    results = driver.xpath_elements('//div[@id="links"] //article //h2 //span')
+    driver.xpath_element('//input[@placeholder]').send_keys(keyword, Keys.ENTER)
+    results = driver.xpath_elements('//article //h2 //span')
     for i in results:
         assert keyword in i.text.lower()
 

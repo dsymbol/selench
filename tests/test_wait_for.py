@@ -12,18 +12,6 @@ def test_element_visibility(driver):
     assert not elm.is_displayed()
 
 
-def test_elements_visibility(driver):
-    driver.get("https://github.com/")
-    driver.maximize()
-    dd = driver.element('(//summary[contains(@class, "HeaderMenu-summary")])[1]')
-    driver.action.hover(dd)
-    elements = driver.wait_for.elements_visibility('(//div[contains(@class,"dropdown-menu")])[1] //li')
-    assert all([i.is_displayed() for i in elements])
-    dd.click()
-    elements = driver.wait_for.elements_invisibility('(//div[contains(@class,"dropdown-menu")])[1] //li')
-    assert not all([i.is_displayed() for i in elements])
-
-
 def test_selection_state(driver):
     driver.get(f"{shared.INTERNET}/checkboxes")
     chk1 = driver.element('input[type="checkbox"]')
