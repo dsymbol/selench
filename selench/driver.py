@@ -374,28 +374,21 @@ class Selench:
         """
         return self.webdriver.log_types
 
-    def _detect_locator_type(self, selector: str):
+    def _detect_locator_type(self, selector: str) -> tuple:
         """
         Detects if selector is CSS and returns a CSS locator otherwise returns a XPath locator
         """
-        if self._is_css(selector):
-            locator = (By.CSS_SELECTOR, selector)
-        else:
-            locator = (By.XPATH, selector)
-        return locator
-
-    def _is_css(self, selector: str) -> bool:
-        script = """
+        js = """
         const queryCheck = (s) => document.createDocumentFragment().querySelector(s)
-        
+
         const isSelectorValid = (selector) => {
           try { queryCheck(selector) } catch { return false }
           return true
         }    
-        
+
         return isSelectorValid(arguments[0])
         """
-        return self.execute_js(script, selector)
+        return (By.CSS_SELECTOR, selector) if self.execute_js(js, selector) else (By.XPATH, selector)
 
     def clear(self, selector: str, timeout: int = None) -> None:
         """
