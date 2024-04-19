@@ -26,3 +26,12 @@ def test_locator_type(driver):
     xpath_test = [driver._is_css(i) for i in xpath_examples]
     assert all(css_test)
     assert not all(xpath_test)
+
+
+def test_element_exist_visible(driver):
+    driver.get("https://github.com")
+    selector = '.text-right [aria-label="Toggle navigation"]'
+    assert driver.element_exists(selector)
+    assert driver.element_visible(selector)
+    driver.maximize()
+    assert not driver.element_visible(selector)

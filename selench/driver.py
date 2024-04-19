@@ -102,7 +102,7 @@ class Selench:
 
             element = driver.css_element('#content')
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.CSS_SELECTOR, selector),
                                                                f"Could not find element with the CSS `{selector}`")
         return element
@@ -122,7 +122,7 @@ class Selench:
 
             elements = driver.css_elements('#content')
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         try:
             elements = WebDriverWait(self.webdriver, timeout).until(
                 lambda d: d.find_elements(By.CSS_SELECTOR, selector),
@@ -149,7 +149,7 @@ class Selench:
 
             element = driver.xpath_element('//div')
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(By.XPATH, selector),
                                                                f"Could not find element with the XPATH `{selector}`")
         return element
@@ -170,7 +170,7 @@ class Selench:
             elements = driver.xpath_elements('//div')
         """
         try:
-            if not timeout: timeout = self.wait
+            timeout = timeout if timeout else self.wait
             elements = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_elements(By.XPATH, selector),
                                                                     f"Could not find elements with the XPATH `{selector}`")
         except TimeoutException:
@@ -199,7 +199,7 @@ class Selench:
             # Would detect that //div is not a CSS selector and return an XPath element
             element = driver.element('//div')
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         locator = self._detect_locator_type(selector)
         element = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_element(*locator),
                                                                f"Could not find element with the {locator}")
@@ -225,13 +225,53 @@ class Selench:
             elements = driver.elements('//div')
         """
         try:
-            if not timeout: timeout = self.wait
+            timeout = timeout if timeout else self.wait
             locator = self._detect_locator_type(selector)
             elements = WebDriverWait(self.webdriver, timeout).until(lambda d: d.find_elements(*locator),
                                                                     f"Could not find elements with the {locator}")
         except TimeoutException:
             elements = []
         return elements
+
+    def element_exists(self, selector: str, timeout: int = None) -> bool:
+        """
+        Checks if an element exists on the webpage using the given selector.
+
+        Args:
+            selector: selector of the element to check for existence
+            timeout: The time to wait for the element to exist. Default is None, which means use the default wait time.
+
+        Returns:
+            bool: True if the element exists, False otherwise.
+
+        Example::
+
+            if driver.element_exists('#element_id'):
+                print("Element exists on the webpage")
+        """
+        timeout = timeout if timeout else self.wait
+        return bool(self.elements(selector, timeout))
+
+    def element_visible(self, selector: str, timeout: int = None) -> bool:
+        """
+        Checks if an element is visible on the webpage using the given selector.
+
+        Args:
+            selector: selector of the element to check for visibility
+            timeout: The time to wait for the element to be visible. Default is None, which means use the default wait time.
+
+        Returns:
+            bool: True if the element is visible, False otherwise.
+
+        Example::
+
+            if driver.element_visible('#element_id'):
+                print("Element is visible on the webpage")
+        """
+        timeout = timeout if timeout else self.wait
+        if self.element_exists(selector, timeout):
+            return self.element(selector, timeout).is_displayed()
+        return False
 
     def click(self, selector: str, timeout: int = None) -> None:
         """
@@ -246,7 +286,7 @@ class Selench:
 
             driver.click('#button')
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         self.wait_for.element_clickable(selector, timeout).click()
 
     def send_keys(self, selector: str, *values, timeout: int = None) -> None:
@@ -265,7 +305,7 @@ class Selench:
 
             driver.send_keys('textarea', 'Hello World', Keys.ENTER)
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         self.wait_for.element_clickable(selector, timeout).send_keys(*values)
 
     @property
@@ -366,7 +406,7 @@ class Selench:
             selector: selector of the element to be cleared
             timeout: maximum time to wait for the element to be cleared. Default is None, which means use the default wait time.
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         self.wait_for.element_clickable(selector, timeout).clear()
 
     def hover(self, element: WebElement):
@@ -514,7 +554,7 @@ class Selench:
         Args:
             timeout: The time to wait for the new window to open. Default is None, which means use the default wait time.
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         expected_number = len(self.all_window_handles) + 1
         self.webdriver.switch_to.new_window("window")
         WebDriverWait(self.webdriver, timeout).until(ec.number_of_windows_to_be(expected_number),
@@ -528,7 +568,7 @@ class Selench:
         Args:
             timeout: The time to wait for the new tab to open. Default is None, which means use the default wait time.
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         expected_number = len(self.all_window_handles) + 1
         self.webdriver.switch_to.new_window("tab")
         WebDriverWait(self.webdriver, timeout).until(ec.number_of_windows_to_be(expected_number),
@@ -566,7 +606,7 @@ class Selench:
         Example::
             driver.switch_frame("iframe[id=ifr]")
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         locator = self._detect_locator_type(selector)
         frame = WebDriverWait(self.webdriver, timeout).until(ec.frame_to_be_available_and_switch_to_it(locator),
                                                              "Frame is not available")
@@ -605,7 +645,7 @@ class Selench:
             alert.send_keys('foo')
             print(alert.text)
         """
-        if not timeout: timeout = self.wait
+        timeout = timeout if timeout else self.wait
         alert = WebDriverWait(self.webdriver, timeout).until(ec.alert_is_present(), "No alerts are present")
         return alert
 
