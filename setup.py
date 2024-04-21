@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='selench',
-    version='19.04.2024',
+    version='22.04.2024',
     packages=find_packages(),
     url='https://github.com/dsymbol/selench',
     license='OSI Approved :: MIT License',
@@ -12,7 +12,8 @@ setup(
     long_description=open("README.md", encoding='utf-8').read(),
     long_description_content_type="text/markdown",
     install_requires=[
-        'selenium==4.19.0'
+        'selenium==4.19.0',
+        'pytest'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
