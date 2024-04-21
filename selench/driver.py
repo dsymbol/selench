@@ -12,7 +12,7 @@ Main module that holds all the methods to interact with the browser.
 """
 import json
 from pathlib import Path
-from typing import Literal, List, Union
+from typing import Literal, List, Union, Any
 
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -210,7 +210,7 @@ class Selench:
         Identifies the type of the provided selector and find a list of matching element.
 
         Args:
-            selector: The selector for the element.
+            selector: The selector for the elements.
             timeout: The time to wait for the elements to be found. Default is None, which means use the default wait time.
 
         Returns:
@@ -233,45 +233,46 @@ class Selench:
             elements = []
         return elements
 
-    def element_exists(self, selector: str, timeout: int = None) -> bool:
+    def elements_exist(self, selector: str, timeout: int = None) -> list[WebElement]:
         """
-        Checks if an element exists on the webpage using the given selector.
+        Checks if any elements exists on the webpage using the given selector.
 
         Args:
-            selector: selector of the element to check for existence
-            timeout: The time to wait for the element to exist. Default is None, which means use the default wait time.
+            selector: The selector for the elements.
+            timeout: The time to wait for the elements to be found. Default is None, which means use the default wait time.
 
         Returns:
-            bool: True if the element exists, False otherwise.
+            A list of the found WebElements. If no elements are found, an empty list is returned.
 
         Example::
 
-            if driver.element_exists('#element_id'):
-                print("Element exists on the webpage")
+            if elements := driver.elements_exist('#element_id'):
+                print(f"{len(elements)} elements found on webpage with selector `#element_id`")
         """
         timeout = timeout if timeout else self.wait
-        return bool(self.elements(selector, timeout))
+        return self.elements(selector, timeout)
 
-    def element_visible(self, selector: str, timeout: int = None) -> bool:
+    def elements_visible(self, selector: str, timeout: int = None) -> list[WebElement]:
         """
-        Checks if an element is visible on the webpage using the given selector.
+        Checks if any elements are visible on the webpage using the given selector.
 
         Args:
-            selector: selector of the element to check for visibility
-            timeout: The time to wait for the element to be visible. Default is None, which means use the default wait time.
+            selector: The selector for the elements.
+            timeout: The time to wait for the elements to be found. Default is None, which means use the default wait time.
 
         Returns:
-            bool: True if the element is visible, False otherwise.
+            A list of the visible WebElements. If no elements are visible, an empty list is returned.
 
         Example::
 
-            if driver.element_visible('#element_id'):
-                print("Element is visible on the webpage")
+            if elements := driver.elements_visible('#element_id'):
+                for element in elements:
+                    element.click()
         """
         timeout = timeout if timeout else self.wait
-        if self.element_exists(selector, timeout):
-            return self.element(selector, timeout).is_displayed()
-        return False
+        if elements := self.elements_exist(selector, timeout):
+            return [element for element in elements if element.is_displayed()]
+        return []
 
     def click(self, selector: str, timeout: int = None) -> None:
         """

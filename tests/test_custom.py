@@ -31,7 +31,7 @@ def test_locator_type(driver):
 def test_element_exist_visible(driver):
     driver.get("https://github.com")
     selector = '.text-right [aria-label="Toggle navigation"]'
-    assert driver.element_exists(selector)
-    assert driver.element_visible(selector)
+    assert driver.elements_exist(selector)
+    assert driver.elements_visible(selector)
     driver.maximize()
-    assert not driver.element_visible(selector)
+    assert not driver.elements_visible(selector)
