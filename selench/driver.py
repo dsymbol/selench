@@ -40,21 +40,9 @@ class Selench:
     def __init__(
             self,
             driver: WebDriver | Literal["Chrome", "Firefox", "Edge"] = "Chrome",
-            wait: int = 10,
+            wait: int = 10
     ) -> None:
-        if isinstance(driver, WebDriver):
-            self._webdriver = driver
-        elif isinstance(driver, str):
-            if driver.lower() == "chrome":
-                self._webdriver = webdriver.Chrome()
-            elif driver.lower() == "firefox":
-                self._webdriver = webdriver.Firefox()
-            elif driver.lower() == "edge":
-                self._webdriver = webdriver.Edge()
-            else:
-                raise Exception("Unknown browser pass as WebDriver object")
-        else:
-            raise Exception("Unknown type passed to driver")
+        self.webdriver = driver
         self.wait = wait
         self._wait_for = WaitFor(self)
 
@@ -72,6 +60,22 @@ class Selench:
             driver.webdriver.get("https://www.google.com")
         """
         return self._webdriver
+
+    @webdriver.setter
+    def webdriver(self, d):
+        if isinstance(d, WebDriver):
+            self._webdriver = d
+        elif isinstance(d, str):
+            if d.lower() == "chrome":
+                self._webdriver = webdriver.Chrome()
+            elif d.lower() == "firefox":
+                self._webdriver = webdriver.Firefox()
+            elif d.lower() == "edge":
+                self._webdriver = webdriver.Edge()
+            else:
+                raise Exception("Unknown browser passed as WebDriver object")
+        else:
+            raise Exception("Unknown type passed to driver")
 
     @property
     def wait_for(self) -> WaitFor:
