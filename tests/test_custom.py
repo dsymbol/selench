@@ -5,9 +5,9 @@ import shared
 
 def test_basic_auth(driver):
     driver.basic_auth(f'{shared.INTERNET}/basic_auth', 'admin', 'admin')
-    assert 'congratulations' in driver.css_element('div[class=example] p').text.lower()
+    assert 'congratulations' in driver.element('div[class=example] p').text.lower()
     driver.basic_auth(f'{shared.INTERNET}/digest_auth', 'admin', 'admin')
-    assert 'congratulations' in driver.css_element('div[class=example] p').text.lower()
+    assert 'congratulations' in driver.element('div[class=example] p').text.lower()
 
 
 def test_detect_elements(driver):

@@ -27,24 +27,24 @@ def test_switch_window(driver):
 def test_switch_frame(driver):
     driver.get(f"{shared.INTERNET}/iframe")
     driver.switch_frame('iframe[id=mce_0_ifr]')
-    textarea = driver.css_element('body')
+    textarea = driver.element('body')
     textarea.clear()
     textarea.send_keys('tests')
     assert textarea.text == 'tests'
     driver.leave_frame()
-    assert driver.css_element('iframe[id=mce_0_ifr]')
+    assert driver.element('iframe[id=mce_0_ifr]')
 
 
 def test_alert(driver):
     driver.get(f"{shared.INTERNET}/javascript_alerts")
-    result = driver.css_element('#result')
-    driver.css_element('button[onclick*=Alert]').click()
+    result = driver.element('#result')
+    driver.element('button[onclick*=Alert]').click()
     driver.alert().dismiss()
     assert result.text.lower() == "you successfully clicked an alert"
-    driver.css_element('button[onclick*=Confirm]').click()
+    driver.element('button[onclick*=Confirm]').click()
     driver.alert().accept()
     assert result.text.lower() == "you clicked: ok"
-    driver.css_element('button[onclick*=Prompt]').click()
+    driver.element('button[onclick*=Prompt]').click()
     driver.alert().send_keys('tests')
     driver.alert().accept()
     assert result.text.lower() == "you entered: tests"
