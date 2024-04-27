@@ -9,8 +9,7 @@ def test_get_url(driver):
 
 def test_select_element(driver):
     driver.get(f'{shared.CBT}/selenium_example_page.html')
-    select_element = driver.element('#dropdown')
-    sel = driver.select_element(select_element)
+    sel = driver.element('#dropdown')
     sel.select_by_value('option2')
     assert driver.element('option[value=option2]').is_selected()
     sel.select_by_index(2)

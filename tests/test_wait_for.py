@@ -4,22 +4,20 @@ import shared
 def test_element_visibility(driver):
     driver.get(f"{shared.INTERNET}/dynamic_loading/2")
     driver.element('div[id="start"] button').click()
-    elm = driver.wait_for.element_visibility('div[id="finish"] h4')
-    assert "hello world" in elm.text.lower()
+    driver.wait_for.element_visibility('div[id="finish"] h4')
+    assert "hello world" in driver.element('div[id="finish"] h4').text.lower()
     driver.get(f"{shared.INTERNET}/dynamic_loading/1")
     driver.element('div[id="start"] button').click()
-    elm = driver.wait_for.element_invisibility('div[id="loading"]')
-    assert not elm.is_displayed()
+    driver.wait_for.element_invisibility('div[id="loading"]')
+    assert not driver.element('div[id="loading"]').is_displayed()
 
 
 def test_selection_state(driver):
     driver.get(f"{shared.INTERNET}/checkboxes")
-    chk1 = driver.element('input[type="checkbox"]')
-    chk1.click()
+    chk1 = driver.element('input[type="checkbox"]').click()
     driver.wait_for.element_selection_state('input[type="checkbox"]', True)
     assert chk1.is_selected()
-    chk2 = driver.element('(//input[@type="checkbox"])[2]')
-    chk2.click()
+    chk2 = driver.element('(//input[@type="checkbox"])[2]').click()
     driver.wait_for.element_selection_state('(//input[@type="checkbox"])[2]', False)
     assert not chk2.is_selected()
 

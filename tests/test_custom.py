@@ -22,8 +22,8 @@ def test_detect_elements(driver):
 def test_locator_type(driver):
     css_examples = ['.foo:empty', '#foo', '#foo p', '.foo[bar^="fum"]', 'a:visited', 'h2', '.foo[bar*="fum"]']
     xpath_examples = ['//hr[@class="edge" and position()=1]', './div/b', '//a/@href', '//*[count(*)=3]', '//E/*[1]']
-    css_test = [driver._detect_locator_type(i) for i in css_examples]
-    xpath_test = [driver._detect_locator_type(i) for i in xpath_examples]
+    css_test = [driver._detect_selector(i) for i in css_examples]
+    xpath_test = [driver._detect_selector(i) for i in xpath_examples]
     assert all(["css" in i[0] for i in css_test])
     assert all(["xpath" in i[0] for i in xpath_test])
 

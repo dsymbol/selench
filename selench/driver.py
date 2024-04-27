@@ -21,11 +21,10 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
+from .element import Element
 from .wait_for import WaitFor
 
 
@@ -89,7 +88,7 @@ class Selench:
         """
         return self._wait_for
 
-    def element(self, selector: str) -> WebElement:
+    def element(self, selector: str) -> Element:
         """
         Identifies the type of the provided selector and find the first matching element.
 
@@ -97,7 +96,7 @@ class Selench:
             selector: The selector for the element.
 
         Returns:
-            The found WebElement.
+            The found Element.
 
         Raises:
             Exception: If the element is not found.
@@ -110,12 +109,12 @@ class Selench:
             # Would detect that //div is not a CSS selector and return an XPath element
             element = driver.element('//div')
         """
-        locator = self._detect_locator_type(selector)
+        locator = self._detect_selector(selector)
         element = self.wait.until(lambda d: d.find_element(*locator),
                                   f"Could not find element with the {locator}")
-        return element
+        return Element(self, element, locator)
 
-    def elements(self, selector: str) -> List[WebElement]:
+    def elements(self, selector: str) -> List[Element]:
         """
         Identifies the type of the provided selector and find a list of matching element.
 
@@ -123,7 +122,7 @@ class Selench:
             selector: The selector for the elements.
 
         Returns:
-            A list of the found WebElements. If no elements are found, an empty list is returned.
+            A list of the found Elements. If no elements are found, an empty list is returned.
 
         Example::
 
@@ -134,14 +133,15 @@ class Selench:
             elements = driver.elements('//div')
         """
         try:
-            locator = self._detect_locator_type(selector)
+            locator = self._detect_selector(selector)
             elements = self.wait.until(lambda d: d.find_elements(*locator),
                                        f"Could not find elements with the {locator}")
+            elements = [Element(self, element, locator) for element in elements]
         except TimeoutException:
             elements = []
         return elements
 
-    def elements_exist(self, selector: str) -> list[WebElement]:
+    def elements_exist(self, selector: str) -> list[Element]:
         """
         Checks if any elements exists on the webpage using the given selector.
 
@@ -149,7 +149,7 @@ class Selench:
             selector: The selector for the elements.
 
         Returns:
-            A list of the found WebElements. If no elements are found, an empty list is returned.
+            A list of the found Elements. If no elements are found, an empty list is returned.
 
         Example::
 
@@ -158,7 +158,7 @@ class Selench:
         """
         return self.elements(selector)
 
-    def elements_visible(self, selector: str) -> list[WebElement]:
+    def elements_visible(self, selector: str) -> list[Element]:
         """
         Checks if any elements are visible on the webpage using the given selector.
 
@@ -166,7 +166,7 @@ class Selench:
             selector: The selector for the elements.
 
         Returns:
-            A list of the visible WebElements. If no elements are visible, an empty list is returned.
+            A list of the visible Elements. If no elements are visible, an empty list is returned.
 
         Example::
 
@@ -177,37 +177,6 @@ class Selench:
         if elements := self.elements_exist(selector):
             return [element for element in elements if element.is_displayed()]
         return []
-
-    def click(self, selector: str) -> None:
-        """
-        Clicks on an element on the webpage using the given selector.
-        Waits for the element to be clickable before clicking.
-
-        Args:
-            selector: selector of the element to be clicked
-
-        Example::
-
-            driver.click('#button')
-        """
-        self.wait_for.element_clickable(selector).click()
-
-    def send_keys(self, selector: str, *values) -> None:
-        """
-        Sends keys to an element on the webpage using the given selector.
-        Waits for the element to be visible and enabled before sending keys.
-
-        Args:
-            selector: selector of the element to send keys to
-            *values: keys to be sent to the element
-
-        Example::
-
-            from selench import Keys
-
-            driver.send_keys('textarea', 'Hello World', Keys.ENTER)
-        """
-        self.wait_for.element_clickable(selector).send_keys(*values)
 
     @property
     def wait(self) -> WebDriverWait:
@@ -293,9 +262,9 @@ class Selench:
         """
         return self.webdriver.log_types
 
-    def _detect_locator_type(self, selector: str) -> tuple:
+    def _detect_selector(self, selector: str) -> tuple[str, str]:
         """
-        Detects if selector is CSS and returns a CSS locator otherwise returns a XPath locator
+        Detects if a selector is CSS. Returns (By.CSS_SELECTOR, selector) if it is, else (By.XPATH, selector).
         """
         js = """
         const queryCheck = (s) => document.createDocumentFragment().querySelector(s)
@@ -308,52 +277,6 @@ class Selench:
         return isSelectorValid(arguments[0])
         """
         return (By.CSS_SELECTOR, selector) if self.execute_js(js, selector) else (By.XPATH, selector)
-
-    def clear(self, selector: str) -> None:
-        """
-        Clears the text of an element on the webpage using the given selector.
-        Waits for the element to be visible and enabled before clearing.
-
-        Args:
-            selector: selector of the element to be cleared
-        """
-        self.wait_for.element_clickable(selector).clear()
-
-    def hover(self, element: WebElement):
-        """
-        Move the mouse cursor over the provided web element.
-
-        Args:
-            element: The web element to hover over.
-        """
-        ActionChains(self.webdriver).move_to_element(element).perform()
-
-    def double_click(self, element: WebElement):
-        """
-        Perform a double click on the provided web element.
-
-        Args:
-            element: The web element to perform the double click on.
-        """
-        ActionChains(self.webdriver).double_click(element).perform()
-
-    def right_click(self, element: WebElement):
-        """
-        Perform a right click on the provided web element.
-
-        Args:
-            element: The web element to perform the right click on.
-        """
-        ActionChains(self.webdriver).context_click(element).perform()
-
-    def scroll_to_element(self, element: WebElement):
-        """
-        Scroll the page to the provided web element.
-
-        Args:
-            element: The web element to scroll to.
-        """
-        ActionChains(self.webdriver).scroll_to_element(element).perform()
 
     def scroll_amount(self, x: int, y: int):
         """
@@ -370,51 +293,6 @@ class Selench:
         Scroll the page to the bottom.
         """
         self.execute_js('window.scrollTo(0, document.body.scrollHeight)')
-
-    def drag_and_drop(self, draggable: WebElement, droppable: WebElement):
-        """
-        Perform a drag and drop action on the provided web elements.
-
-        Args:
-            draggable: The web element to be dragged.
-            droppable: The web element to be dropped on.
-        """
-        ActionChains(self.webdriver).click_and_hold(draggable).move_to_element(droppable).perform()
-        ActionChains(self.webdriver).release().perform()
-
-    def select_element(self, element_or_selector: str | WebElement) -> Select:
-        """
-        Convert a web element to a Select object. The Select object provides a convenient way to interact with
-        select elements (drop-down lists) on a webpage. It allows the user to select one or more options from the list,
-        and also provides methods to retrieve the selected options, as well as other useful information about the select element.
-
-        Args:
-            element_or_selector: The web element or selector to convert to a Select object.
-
-        Returns:
-            Select: The converted Select object.
-
-        Example::
-
-            element = driver.element('select')
-            select_object = driver.select_element(element)
-
-            # Select an <option> based upon the <select> element's internal index
-            select_object.select_by_index(1)
-
-            # Select an <option> based upon its value attribute
-            select_object.select_by_value('value1')
-
-            # Select an <option> based upon its text
-            select_object.select_by_visible_text('Bread')
-        """
-        if isinstance(element_or_selector, str):
-            element_or_selector = self.element(element_or_selector)
-        elif isinstance(element_or_selector, WebElement):
-            pass
-        else:
-            raise ValueError('Unsupported variable type ' + str(type(element_or_selector)))
-        return Select(element_or_selector)
 
     def execute_js(self, script: str, *args):
         """
@@ -507,7 +385,7 @@ class Selench:
         Example::
             driver.switch_frame("iframe[id=ifr]")
         """
-        locator = self._detect_locator_type(selector)
+        locator = self._detect_selector(selector)
         frame = self.wait.until(ec.frame_to_be_available_and_switch_to_it(locator),
                                 "Frame is not available")
         return frame
