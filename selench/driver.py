@@ -25,7 +25,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 from .element import Element
-from .wait_for import WaitFor
+from .expect import Expect
 
 
 class Selench:
@@ -34,17 +34,17 @@ class Selench:
 
     Args:
         driver: WebDriver instance used to interact with the browser.
-        wait: The default explicit wait time for WebDriverWait.
+        timeout: The default explicit timeout for WebDriverWait.
     """
 
     def __init__(
             self,
             driver: WebDriver | Literal["Chrome", "Firefox", "Edge"] = "Chrome",
-            wait: int = 10
+            timeout: int = 10
     ) -> None:
         self.webdriver = driver
-        self.wait = wait
-        self._wait_for = WaitFor(self)
+        self.wait = timeout
+        self._expect = Expect(self)
 
     @property
     def webdriver(self):
@@ -78,15 +78,15 @@ class Selench:
             raise Exception("Unknown type passed to driver")
 
     @property
-    def wait_for(self) -> WaitFor:
+    def expect(self) -> Expect:
         """
-        This property provides access to the WaitFor class, which contains explicit wait functions.
+        This property provides access to the Expect class, which contains explicit wait functions.
 
         Example::
 
-            driver.wait_for.element_visibility('input')
+            driver.expect.element_to_be_visible('input')
         """
-        return self._wait_for
+        return self._expect
 
     def element(self, selector: str) -> Element:
         """

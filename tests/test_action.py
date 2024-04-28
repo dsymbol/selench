@@ -28,7 +28,7 @@ def test_drag_and_drop(driver):
     drag = driver.element('#draggable')
     drop = driver.element('#droppable')
     drag.drag_to(drop)
-    driver.wait_for.element_text_to_be('div[id=droppable] p', expected)
+    driver.expect.element_text_to_be('div[id=droppable] p', expected)
     assert driver.element('div[id=droppable] p').text == expected
 
     driver.get(f'{shared.INTERNET}/drag_and_drop')

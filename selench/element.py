@@ -72,7 +72,6 @@ class Element:
         """
         The text of the element.
         """
-        self._driver.wait_for.element_clickable(self)
         self.webelement.click()
         return self
 

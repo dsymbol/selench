@@ -5,7 +5,10 @@ It provides a more concise syntax that makes the code more readable and easier t
 
 ### Key Features
 
+- Concise syntax
+- Less imports
 - Elements have an explicit wait time by default
+- Simple expected_conditions implementation as expect
 - Element type detection ( CSS & XPATH )
 
 ## Installation
@@ -50,7 +53,7 @@ def test_ddg_search_query(driver):
     keyword = 'github'
     driver.get('https://duckduckgo.com/')
     driver.element('[name=q]').send_keys(keyword, Keys.ENTER)
-    driver.wait_for.title_to_contain(keyword)
+    driver.expect.title_to_contain(keyword)
     titles = driver.elements('a[data-testid=result-title-a] span')
 
     for title in titles:

@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from .element import Element
 
 
-class WaitFor:
+class Expect:
     """
     This class provides methods for waiting for certain conditions to be met in a web page
     using Selenium's WebDriverWait and ExpectedConditions.
@@ -13,7 +13,7 @@ class WaitFor:
     def __init__(self, driver):
         self._driver = driver
 
-    def element_clickable(self, mark: Element | str) -> None:
+    def element_to_be_clickable(self, mark: Element | str) -> None:
         """
         An Expectation for checking an element is visible and enabled such that you can click it.
 
@@ -26,14 +26,14 @@ class WaitFor:
         locator = mark.webelement if isinstance(mark, Element) else self._driver._detect_selector(mark)
         self._driver.wait.until(ec.element_to_be_clickable(locator), "Element is not clickable")
 
-    def element_visibility(self, selector: str) -> None:
+    def element_to_be_visible(self, selector: str) -> None:
         """
         An expectation for checking that an element is present on the DOM of a page and visible.
         Visibility means that the element is not only displayed but also has a height and width
         that is greater than 0.
 
         Args:
-            selector: The selector of the element to wait for.
+            selector: The selector of the element.
 
         Raises:
             TimeoutException: If the element is not visible within the given timeout.
@@ -41,7 +41,7 @@ class WaitFor:
         locator = self._driver._detect_selector(selector)
         self._driver.wait.until(ec.visibility_of_element_located(locator), "Element is not visible")
 
-    def elements_visibility(self, selector: str) -> None:
+    def elements_to_be_visible(self, selector: str) -> None:
         """
         An expectation for checking that all elements are present on the DOM of a page and visible.
         Visibility means that the elements are not only displayed but also has a height and width
@@ -56,7 +56,7 @@ class WaitFor:
         locator = self._driver._detect_selector(selector)
         self._driver.wait.until(ec.visibility_of_all_elements_located(locator), "Not all elements are visible")
 
-    def element_invisibility(self, mark: Element | str) -> None:
+    def element_to_be_invisible(self, mark: Element | str) -> None:
         """
         An Expectation for checking that an element is either invisible or not present on the DOM.
 
@@ -69,9 +69,9 @@ class WaitFor:
         locator = mark.webelement if isinstance(mark, Element) else self._driver._detect_selector(mark)
         self._driver.wait.until(ec.invisibility_of_element_located(locator), "Element is not invisible")
 
-    def elements_invisibility(self, selector: str) -> None:
+    def elements_to_be_invisible(self, selector: str) -> None:
         """
-        An Expectation for checking that elements are either invisible or not present on the DOM.
+        An Expectation for checking that all elements are either invisible or not present on the DOM.
 
         Args:
             selector: The selector of the elements to wait for.
@@ -79,27 +79,41 @@ class WaitFor:
         Raises:
             TimeoutException: If the elements are not invisible within the given timeout.
         """
-        locator = self._driver._detect_selector(selector)
-        self._driver.wait.until(self._visibility_of_all_elements_located(locator), "Elements are not invisible")
+        def invisibility_of_all_elements_located(locator):
 
-    def element_staleness(self, element: Element) -> None:
+            def _predicate(driver):
+                try:
+                    elements = driver.find_elements(*locator)
+                    for element in elements:
+                        if element.is_displayed():
+                            return False
+                    return elements
+                except StaleElementReferenceException:
+                    return False
+
+            return _predicate
+
+        locator = self._driver._detect_selector(selector)
+        self._driver.wait.until(invisibility_of_all_elements_located(locator), "Elements are not invisible")
+
+    def element_to_be_stale(self, element: Element) -> None:
         """
         Wait until an element is no longer attached to the DOM. element is the element to wait for.
 
         Args:
-            element: The WebElement to wait for.
+            element: The Element to wait for.
 
         Raises:
             TimeoutException: If the element is not stale.
         """
         self._driver.wait.until(ec.staleness_of(element.webelement), "Element did not go stale")
 
-    def element_text(self, selector: str) -> None:
+    def element_to_have_text(self, selector: str) -> None:
         """
         An expectation for checking if text is present in the specified element.
 
         Args:
-            selector: The selector of the element to wait for.
+            selector: The selector of the element.
 
         Raises:
             TimeoutException: If the element does not contain text.
@@ -107,7 +121,7 @@ class WaitFor:
         locator = self._driver._detect_selector(selector)
         self._driver.wait.until(lambda d: bool(d.find_element(*locator).text), "No text in element")
 
-    def element_text_to_include(self, selector: str, text: str) -> None:
+    def element_text_to_contain(self, selector: str, text: str) -> None:
         """
         An expectation for checking if the given text is present in the specified element.
 
@@ -120,7 +134,7 @@ class WaitFor:
 
         Example::
 
-            driver.wait_for.element_text_to_include('//div[@id="msg"]', 'welcome')
+            driver.expect.element_text_to_contain('//div[@id="msg"]', 'welcome')
         """
         locator = self._driver._detect_selector(selector)
         self._driver.wait.until(ec.text_to_be_present_in_element(locator, text), f"Element text is not `{text}`")
@@ -135,13 +149,13 @@ class WaitFor:
 
         Example::
 
-            driver.wait_for.element_text_to_be('#my-element', 'Hello')
+            driver.expect.element_text_to_be('#my-element', 'Hello')
         """
         locator = self._driver._detect_selector(selector)
         self._driver.wait.until(lambda d: bool(d.find_element(*locator).text == text),
                                 f"Element text doesn't match {text}")
 
-    def element_attribute_text_to_include(self, selector: str, attribute: str, text: str) -> None:
+    def element_attribute_text_to_contain(self, selector: str, attribute: str, text: str) -> None:
         """
         An expectation for checking if the given text is present in the element’s attribute.
 
@@ -155,37 +169,44 @@ class WaitFor:
 
         Example::
 
-            driver.wait_for.element_attribute_text_to_include('//div[@id="msg"]', 'value', 'new message')
+            driver.expect.element_attribute_text_to_contain('//div[@id="msg"]', 'value', 'new message')
         """
         locator = self._driver._detect_selector(selector)
         self._driver.wait.until(ec.text_to_be_present_in_element_attribute(locator, attribute, text),
                                 "Text is not present in attribute")
 
-    def element_selection_state(self, selector: str, is_selected: bool) -> None:
+    def element_to_be_checked(self, selector: str) -> None:
         """
-        An expectation to locate an element and check if the selection state specified is in that state.
+        An expectation to locate an element and check if it's selected.
 
         Args:
-            selector: The selector of the element to wait for.
-            is_selected: True for checked False otherwise.
+            selector: The selector of the element.
 
         Raises:
             TimeoutException: if the selection state specified is not in that state.
-
-        Example::
-
-            driver.wait_for.element_selection_state('input[type="checkbox"]', False)
         """
         locator = self._driver._detect_selector(selector)
-        self._driver.wait.until(ec.element_located_selection_state_to_be(locator, is_selected),
-                                "Element is not selected" if is_selected else "Element is selected")
+        self._driver.wait.until(ec.element_located_selection_state_to_be(locator, True), "Element is not selected")
 
-    def element_presence(self, selector: str) -> None:
+    def element_to_not_be_checked(self, selector: str) -> None:
+        """
+        An expectation to locate an element and check if it's not selected.
+
+        Args:
+            selector: The selector of the element.
+
+        Raises:
+            TimeoutException: if the selection state specified is not in that state.
+        """
+        locator = self._driver._detect_selector(selector)
+        self._driver.wait.until(ec.element_located_selection_state_to_be(locator, False), "Element is selected")
+
+    def element_to_be_present(self, selector: str) -> None:
         """
         An expectation for checking that an element is present on the DOM of a page.
 
         Args:
-            selector: The selector of the element to wait for.
+            selector: The selector of the element.
 
         Raises:
             TimeoutException: If the element is not present on the DOM.
@@ -205,7 +226,7 @@ class WaitFor:
         """
         self._driver.wait.until(ec.url_to_be(url), f"{url} != {self._driver.url}")
 
-    def url_to_include(self, string: str) -> None:
+    def url_to_contain(self, string: str) -> None:
         """
         An expectation for checking that the current url contains a case-sensitive substring.
 
@@ -240,22 +261,3 @@ class WaitFor:
             TimeoutException: if the current title does not contain the string.
         """
         self._driver.wait.until(ec.title_contains(string), f"`{self._driver.title}` does not contain `{string}`")
-
-    """
-     * Custom "Expected Conditions" *
-    """
-
-    @staticmethod
-    def _visibility_of_all_elements_located(locator):
-
-        def _predicate(driver):
-            try:
-                elements = driver.find_elements(*locator)
-                for element in elements:
-                    if element.is_displayed():
-                        return False
-                return elements
-            except StaleElementReferenceException:
-                return False
-
-        return _predicate
