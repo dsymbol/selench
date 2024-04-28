@@ -141,43 +141,6 @@ class Selench:
             elements = []
         return elements
 
-    def elements_exist(self, selector: str) -> list[Element]:
-        """
-        Checks if any elements exists on the webpage using the given selector.
-
-        Args:
-            selector: The selector for the elements.
-
-        Returns:
-            A list of the found Elements. If no elements are found, an empty list is returned.
-
-        Example::
-
-            if elements := driver.elements_exist('#element_id'):
-                print(f"{len(elements)} elements found on webpage with selector `#element_id`")
-        """
-        return self.elements(selector)
-
-    def elements_visible(self, selector: str) -> list[Element]:
-        """
-        Checks if any elements are visible on the webpage using the given selector.
-
-        Args:
-            selector: The selector for the elements.
-
-        Returns:
-            A list of the visible Elements. If no elements are visible, an empty list is returned.
-
-        Example::
-
-            if elements := driver.elements_visible('#element_id'):
-                for element in elements:
-                    element.click()
-        """
-        if elements := self.elements_exist(selector):
-            return [element for element in elements if element.is_displayed()]
-        return []
-
     @property
     def wait(self) -> WebDriverWait:
         """
