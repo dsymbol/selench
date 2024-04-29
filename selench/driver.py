@@ -10,10 +10,11 @@ Main module that holds all the methods to interact with the browser.
     driver.element('input[name="q"]').send_keys('Hello World!', Keys.ENTER)
     driver.quit()
 """
+
 import json
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Literal, List
+from typing import List, Literal
 
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -38,9 +39,9 @@ class Selench:
     """
 
     def __init__(
-            self,
-            driver: WebDriver | Literal["Chrome", "Firefox", "Edge"] = "Chrome",
-            timeout: int = 10
+        self,
+        driver: WebDriver | Literal["Chrome", "Firefox", "Edge"] = "Chrome",
+        timeout: int = 10,
     ) -> None:
         self.webdriver = driver
         self.wait = timeout
@@ -110,8 +111,10 @@ class Selench:
             element = driver.element('//div')
         """
         locator = self._detect_selector(selector)
-        element = self.wait.until(lambda d: d.find_element(*locator),
-                                  f"Could not find element with the {locator}")
+        element = self.wait.until(
+            lambda d: d.find_element(*locator),
+            f"Could not find element with the {locator}",
+        )
         return Element(self, element, locator)
 
     def elements(self, selector: str) -> List[Element]:
@@ -134,8 +137,10 @@ class Selench:
         """
         try:
             locator = self._detect_selector(selector)
-            elements = self.wait.until(lambda d: d.find_elements(*locator),
-                                       f"Could not find elements with the {locator}")
+            elements = self.wait.until(
+                lambda d: d.find_elements(*locator),
+                f"Could not find elements with the {locator}",
+            )
             elements = [Element(self, element, locator) for element in elements]
         except TimeoutException:
             elements = []
@@ -239,7 +244,11 @@ class Selench:
 
         return isSelectorValid(arguments[0])
         """
-        return (By.CSS_SELECTOR, selector) if self.execute_js(js, selector) else (By.XPATH, selector)
+        return (
+            (By.CSS_SELECTOR, selector)
+            if self.execute_js(js, selector)
+            else (By.XPATH, selector)
+        )
 
     def scroll_amount(self, x: int, y: int):
         """
@@ -255,7 +264,7 @@ class Selench:
         """
         Scroll the page to the bottom.
         """
-        self.execute_js('window.scrollTo(0, document.body.scrollHeight)')
+        self.execute_js("window.scrollTo(0, document.body.scrollHeight)")
 
     def execute_js(self, script: str, *args):
         """
@@ -296,7 +305,7 @@ class Selench:
         Returns:
             A list of log entries for the specified log type.
         """
-        self.webdriver.get_log(log_type)
+        return self.webdriver.get_log(log_type)
 
     def new_window(self) -> None:
         """
@@ -304,9 +313,10 @@ class Selench:
         """
         expected_number = len(self.all_window_handles) + 1
         self.webdriver.switch_to.new_window("window")
-        self.wait.until(ec.number_of_windows_to_be(expected_number),
-                        "Number of windows is not equal to expected number "
-                        f"`{expected_number}`")
+        self.wait.until(
+            ec.number_of_windows_to_be(expected_number),
+            "Number of windows is not equal to expected number " f"`{expected_number}`",
+        )
 
     def new_tab(self) -> None:
         """
@@ -314,9 +324,10 @@ class Selench:
         """
         expected_number = len(self.all_window_handles) + 1
         self.webdriver.switch_to.new_window("tab")
-        self.wait.until(ec.number_of_windows_to_be(expected_number),
-                        "Number of windows is not equal to expected number "
-                        f"`{expected_number}`")
+        self.wait.until(
+            ec.number_of_windows_to_be(expected_number),
+            "Number of windows is not equal to expected number " f"`{expected_number}`",
+        )
 
     def switch_window(self, name: str = None, index: int = None) -> None:
         """
@@ -349,8 +360,9 @@ class Selench:
             driver.switch_frame("iframe[id=ifr]")
         """
         locator = self._detect_selector(selector)
-        frame = self.wait.until(ec.frame_to_be_available_and_switch_to_it(locator),
-                                "Frame is not available")
+        frame = self.wait.until(
+            ec.frame_to_be_available_and_switch_to_it(locator), "Frame is not available"
+        )
         return frame
 
     def parent_frame(self) -> None:
@@ -399,7 +411,7 @@ class Selench:
 
             driver.basic_auth("https://example.com", "username", "password")
         """
-        new_url = url.replace('//', f'//{username}:{password}@')
+        new_url = url.replace("//", f"//{username}:{password}@")
         self.get(new_url)
 
     def get(self, url: str) -> None:
@@ -577,7 +589,9 @@ class Selench:
         """
         return self.webdriver.get_window_size(windowHandle=window_handle)
 
-    def set_window_size(self, width: int, height: int, window_handle: str = None) -> None:
+    def set_window_size(
+        self, width: int, height: int, window_handle: str = None
+    ) -> None:
         """
         Set the size of a browser window.
 

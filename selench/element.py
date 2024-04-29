@@ -31,7 +31,7 @@ class Element:
         """
         return self.webelement.text
 
-    def element(self, selector: str) -> 'Element':
+    def element(self, selector: str) -> "Element":
         """
         Identifies the type of the provided selector and find the first matching element.
 
@@ -39,17 +39,19 @@ class Element:
             selector: The selector for the element.
 
         Returns:
-            The found WebElement.
+            The found Element.
 
         Raises:
             Exception: If the element is not found.
         """
         locator = self._driver._detect_selector(selector)
-        element = self._driver.wait.until(lambda _: self.webelement.find_element(*locator),
-                                          f"Could not find element with the {locator}")
+        element = self._driver.wait.until(
+            lambda _: self.webelement.find_element(*locator),
+            f"Could not find element with the {locator}",
+        )
         return Element(element, self._driver, locator)
 
-    def elements(self, selector: str) -> List['Element']:
+    def elements(self, selector: str) -> List["Element"]:
         """
         Identifies the type of the provided selector and find a list of matching element.
 
@@ -57,39 +59,41 @@ class Element:
             selector: The selector for the elements.
 
         Returns:
-            A list of the found WebElements. If no elements are found, an empty list is returned.
+            A list of the found Elements. If no elements are found, an empty list is returned.
         """
         try:
             locator = self._driver._detect_selector(selector)
-            elements = self._driver.wait.until(lambda _: self.webelement.find_elements(*locator),
-                                               f"Could not find elements with the {locator}")
+            elements = self._driver.wait.until(
+                lambda _: self.webelement.find_elements(*locator),
+                f"Could not find elements with the {locator}",
+            )
             elements = [Element(element, self._driver, locator) for element in elements]
         except TimeoutException:
             elements = []
         return elements
 
-    def click(self) -> 'Element':
+    def click(self) -> "Element":
         """
         The text of the element.
         """
         self.webelement.click()
         return self
 
-    def send_keys(self, *values: str) -> 'Element':
+    def send_keys(self, *values: str) -> "Element":
         """
         Simulates typing into the element.
         """
         self.webelement.send_keys(*values)
         return self
 
-    def clear(self) -> 'Element':
+    def clear(self) -> "Element":
         """
         Clears the text if it's a text entry element.
         """
         self.webelement.clear()
         return self
 
-    def submit(self) -> 'Element':
+    def submit(self) -> "Element":
         """
         Submits a form.
         """
@@ -126,60 +130,64 @@ class Element:
         """
         return self.webelement.get_property(name)
 
-    def hover(self) -> 'Element':
+    def hover(self) -> "Element":
         """
         Move the mouse cursor over the web element.
         """
         ActionChains(self._driver.webdriver).move_to_element(self.webelement).perform()
         return self
 
-    def double_click(self) -> 'Element':
+    def double_click(self) -> "Element":
         """
         Perform a double click on the web element.
         """
         ActionChains(self._driver.webdriver).double_click(self.webelement).perform()
         return self
 
-    def right_click(self) -> 'Element':
+    def right_click(self) -> "Element":
         """
         Perform a right click on the web element.
         """
         ActionChains(self._driver.webdriver).context_click(self.webelement).perform()
         return self
 
-    def scroll_to(self) -> 'Element':
+    def scroll_to(self) -> "Element":
         """
         Scroll the page to the web element.
         """
-        ActionChains(self._driver.webdriver).scroll_to_element(self.webelement).perform()
+        ActionChains(self._driver.webdriver).scroll_to_element(
+            self.webelement
+        ).perform()
         return self
 
-    def drag_to(self, target: 'Element') -> 'Element':
+    def drag_to(self, target: "Element") -> "Element":
         """
         Perform a drag and drop action to the provided element.
 
         Args:
             target: The element to be dropped on.
         """
-        ActionChains(self._driver.webdriver).click_and_hold(self.webelement).move_to_element(target.webelement).perform()
+        ActionChains(self._driver.webdriver).click_and_hold(
+            self.webelement
+        ).move_to_element(target.webelement).perform()
         ActionChains(self._driver.webdriver).release().perform()
         return self
 
-    def select_by_index(self, index: int) -> 'Element':
+    def select_by_index(self, index: int) -> "Element":
         """
         Select an <option> based upon the <select> element's internal index.
         """
         Select(self.webelement).select_by_index(index)
         return self
 
-    def select_by_value(self, value: str) -> 'Element':
+    def select_by_value(self, value: str) -> "Element":
         """
         Select an <option> based upon its value attribute.
         """
         Select(self.webelement).select_by_value(value)
         return self
 
-    def select_by_visible_text(self, text: str) -> 'Element':
+    def select_by_visible_text(self, text: str) -> "Element":
         """
         Select an <option> based upon its value attribute.
         """
