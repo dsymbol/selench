@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='selench',
-    version='22.04.2024',
+    version='2024.5.2',
     packages=find_packages(),
     url='https://github.com/dsymbol/selench',
     license='OSI Approved :: MIT License',
