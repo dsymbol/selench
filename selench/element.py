@@ -49,7 +49,7 @@ class Element:
             lambda _: self.webelement.find_element(*locator),
             f"Could not find element with the {locator}",
         )
-        return Element(element, self._driver, locator)
+        return Element(self._driver, element, locator)
 
     def elements(self, selector: str) -> List["Element"]:
         """
@@ -67,14 +67,14 @@ class Element:
                 lambda _: self.webelement.find_elements(*locator),
                 f"Could not find elements with the {locator}",
             )
-            elements = [Element(element, self._driver, locator) for element in elements]
+            elements = [Element(self._driver, element, locator) for element in elements]
         except TimeoutException:
             elements = []
         return elements
 
     def click(self) -> "Element":
         """
-        The text of the element.
+        Clicks the element.
         """
         self.webelement.click()
         return self
