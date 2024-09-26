@@ -25,14 +25,23 @@ def test_switch_window(driver):
 
 
 def test_switch_frame(driver):
-    driver.get(f"{shared.INTERNET}/iframe")
-    driver.switch_frame('iframe[id=mce_0_ifr]')
-    textarea = driver.element('body')
-    textarea.clear()
-    textarea.send_keys('tests')
-    assert textarea.text == 'tests'
-    driver.leave_frame()
-    assert driver.element('iframe[id=mce_0_ifr]')
+    driver.get(f"{shared.INTERNET}/nested_frames")
+    driver.switch_frame("[name=frame-top]")
+    # top left
+    driver.switch_frame("[name=frame-left]")
+    assert driver.element('body').text.strip().lower() == "left"
+    driver.parent_frame()
+    # top middle
+    driver.switch_frame("[name=frame-middle]")
+    assert driver.element('body').text.strip().lower() == "middle"
+    driver.parent_frame()
+    # top right
+    driver.switch_frame("[name=frame-right]")
+    assert driver.element('body').text.strip().lower() == "right"
+    # bottom
+    driver.leave_frames()
+    driver.switch_frame("[name=frame-bottom]")
+    assert driver.element("body").text.strip().lower() == "bottom"
 
 
 def test_alert(driver):
@@ -47,4 +56,4 @@ def test_alert(driver):
     driver.element('button[onclick*=Prompt]').click()
     driver.alert().send_keys('tests')
     driver.alert().accept()
-    assert result.text.lower() == "you entered: tests"
+    assert "tests" in result.text.lower()

@@ -12,7 +12,6 @@ Main module that holds all the methods to interact with the browser.
 """
 
 import json
-from contextlib import contextmanager
 from pathlib import Path
 from typing import List, Literal
 
@@ -44,7 +43,7 @@ class Selench:
         timeout: int = 10,
     ) -> None:
         self.webdriver = driver
-        self.wait = timeout
+        self.timeout = timeout
         self._expect = Expect(self)
 
     @property
@@ -89,12 +88,13 @@ class Selench:
         """
         return self._expect
 
-    def element(self, selector: str) -> Element:
+    def element(self, selector: str, timeout: int = None) -> Element:
         """
         Identifies the type of the provided selector and find the first matching element.
 
         Args:
             selector: The selector for the element.
+            timeout: The time to wait for the element to be found.
 
         Returns:
             The found Element.
@@ -110,19 +110,21 @@ class Selench:
             # Would detect that //div is not a CSS selector and return an XPath element
             element = driver.element('//div')
         """
+        wait = WebDriverWait(self.webdriver, timeout) if timeout else self.wait
         locator = self._detect_selector(selector)
-        element = self.wait.until(
+        element = wait.until(
             lambda d: d.find_element(*locator),
             f"Could not find element with the {locator}",
         )
         return Element(self, element, locator)
 
-    def elements(self, selector: str) -> List[Element]:
+    def elements(self, selector: str, timeout: int = None) -> List[Element]:
         """
         Identifies the type of the provided selector and find a list of matching element.
 
         Args:
             selector: The selector for the elements.
+            timeout: The time to wait for the elements to be found.
 
         Returns:
             A list of the found Elements. If no elements are found, an empty list is returned.
@@ -136,8 +138,9 @@ class Selench:
             elements = driver.elements('//div')
         """
         try:
+            wait = WebDriverWait(self.webdriver, timeout) if timeout else self.wait
             locator = self._detect_selector(selector)
-            elements = self.wait.until(
+            elements = wait.until(
                 lambda d: d.find_elements(*locator),
                 f"Could not find elements with the {locator}",
             )
@@ -147,39 +150,28 @@ class Selench:
         return elements
 
     @property
-    def wait(self) -> WebDriverWait:
+    def timeout(self) -> int:
         """
-        The default explicit wait time for WebDriverWait.
-
-        Returns:
-            int: Wait time
+        The default explicit timeout for WebDriverWait.
         """
-        return self._wait
-
-    @wait.setter
-    def wait(self, w: int):
+        return self._timeout
+    
+    @timeout.setter
+    def timeout(self, w: int):
         if w < 0:
-            raise ValueError("Wait cannot be negative")
+            raise ValueError("Timeout cannot be negative")
         self._wait = WebDriverWait(self.webdriver, w)
 
-    @contextmanager
-    def temp_wait(self, timeout: int) -> None:
+    @property
+    def wait(self) -> WebDriverWait:
         """
-        Temporarily change WebDriverWait timeout.
+        This property provides access to the underlying WebDriverWait instance.
 
-        Args:
-            timeout: Temporary wait time for WebDriverWait.
-
-        Example::
-
-            with driver.temp_wait(20):
-                driver.element("#desc")
+        Returns:
+            WebDriverWait instance
         """
-        old_wait = self.wait._timeout
-        self.wait = timeout
-        yield
-        self.wait = old_wait
-
+        return self._wait
+        
     @property
     def title(self) -> str:
         """

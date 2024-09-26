@@ -25,12 +25,12 @@ def test_selection_state(driver):
 def test_url_to_be(driver):
     driver.get(shared.INTERNET)
     driver.get(shared.DUCK)
-    driver.expect.url_to_be(f'{shared.DUCK}/')
+    driver.expect.page_url_to_be(f'{shared.DUCK}/')
     assert driver.url == f'{shared.DUCK}/'
 
 
 def test_title_to_be(driver):
     title = 'ok at DuckDuckGo'
     driver.get(f"{shared.DUCK}/?q=ok")
-    driver.expect.title_to_be(title)
+    driver.expect.page_title_to_be(title)
     assert driver.title == title

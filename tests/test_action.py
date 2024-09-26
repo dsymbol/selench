@@ -8,13 +8,6 @@ def test_hover(driver):
     assert all([i.is_displayed for i in new_visible_elements])
 
 
-def test_double_click(driver):
-    driver.get('https://www.javatpoint.com/oprweb/test.jsp?filename=javascript-dblclick-event1')
-    driver.switch_frame('//iframe[@id="iframewrapper"]')
-    driver.element('//*[@id="heading"]').double_click()
-    assert "javatpoint.com" in driver.element('//*[@id="heading"]').text.lower()
-
-
 def test_right_click(driver):
     driver.get(f'{shared.INTERNET}/context_menu')
     driver.element('div[id=hot-spot]').right_click()

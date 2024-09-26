@@ -53,7 +53,7 @@ def test_ddg_search_query(driver):
     keyword = 'github'
     driver.get('https://duckduckgo.com/')
     driver.element('[name=q]').send_keys(keyword, Keys.ENTER)
-    driver.expect.title_to_contain(keyword)
+    driver.expect.page_title_to_contain(keyword)
     titles = driver.elements('a[data-testid=result-title-a] span')
 
     for title in titles:
