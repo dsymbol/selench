@@ -55,6 +55,8 @@ class Element:
         """
         self.webelement.send_keys(*values)
         return self
+    
+    fill = send_keys
 
     def clear(self) -> "Element":
         """
@@ -137,12 +139,8 @@ class Element:
             True if the element is displayed otherwise False.
         """
         return self.webelement.is_displayed()
-
-    def visible(self) -> bool:
-        """
-        is_displayed() alias.
-        """
-        return self.is_displayed()
+    
+    is_visible = is_displayed
 
     def is_enabled(self) -> bool:
         """
@@ -168,10 +166,10 @@ class Element:
 
         Returns:
             The given property of the element.
-
-        >>> driver.element("#id_2").get_property("value")
         """
         return self.webelement.get_property(name)
+    
+    get_attribute = get_property
 
     def hover(self) -> "Element":
         """

@@ -52,6 +52,8 @@ class Selench:
         """
         self.webdriver.get(url)
 
+    goto = get
+
     def element(self, selector: str, timeout: int = None) -> Element:
         """
         Identifies the type of the provided selector and returns the first matching element.
