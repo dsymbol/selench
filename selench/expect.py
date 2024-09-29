@@ -7,7 +7,7 @@ from .element import Element
 
 class Expect:
     """
-    This class provides methods for waiting for certain conditions to be met in a web page
+    This class provides waiting methods for certain conditions to be met in a web page
     using Selenium's WebDriverWait and ExpectedConditions.
     """
 
@@ -25,7 +25,7 @@ class Expect:
         Raises:
             TimeoutException: If the element is not clickable.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = (
             mark.webelement
             if isinstance(mark, Element)
@@ -48,7 +48,7 @@ class Expect:
         Raises:
             TimeoutException: If the element is not visible within the given timeout.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.visibility_of_element_located(locator), "Element is not visible"
@@ -67,7 +67,7 @@ class Expect:
         Raises:
             TimeoutException: If the element are not visible within the given timeout.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.visibility_of_all_elements_located(locator),
@@ -85,7 +85,7 @@ class Expect:
         Raises:
             TimeoutException: If the element is not invisible within the given timeout.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = (
             mark.webelement
             if isinstance(mark, Element)
@@ -121,7 +121,7 @@ class Expect:
 
             return _predicate
         
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             invisibility_of_all_elements_located(locator), "Elements are not invisible"
@@ -138,7 +138,7 @@ class Expect:
         Raises:
             TimeoutException: If the element is not stale.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         wait.until(
             ec.staleness_of(element.webelement), "Element did not go stale"
         )
@@ -154,7 +154,7 @@ class Expect:
         Raises:
             TimeoutException: If the element does not contain text.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             lambda d: bool(d.find_element(*locator).text), "No text in element"
@@ -176,7 +176,7 @@ class Expect:
 
             driver.expect.element_text_to_contain('//div[@id="msg"]', 'welcome')
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.text_to_be_present_in_element(locator, text),
@@ -196,7 +196,7 @@ class Expect:
 
             driver.expect.element_text_to_be('#my-element', 'Hello')
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             lambda d: bool(d.find_element(*locator).text == text),
@@ -222,7 +222,7 @@ class Expect:
 
             driver.expect.element_attribute_text_to_contain('//div[@id="msg"]', 'value', 'new message')
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.text_to_be_present_in_element_attribute(locator, attribute, text),
@@ -240,7 +240,7 @@ class Expect:
         Raises:
             TimeoutException: if the selection state specified is not in that state.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.element_located_selection_state_to_be(locator, True),
@@ -258,7 +258,7 @@ class Expect:
         Raises:
             TimeoutException: if the selection state specified is not in that state.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.element_located_selection_state_to_be(locator, False),
@@ -276,7 +276,7 @@ class Expect:
         Raises:
             TimeoutException: If the element is not present on the DOM.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         locator = self._driver._detect_selector(selector)
         wait.until(
             ec.presence_of_element_located(locator), "Element is not present on the DOM"
@@ -293,7 +293,7 @@ class Expect:
         Raises:
             TimeoutException: if current url is not the expected url.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         wait.until(ec.url_to_be(url), f"{url} != {self._driver.url}")
 
     def page_url_to_contain(self, string: str, timeout: int = None) -> None:
@@ -307,7 +307,7 @@ class Expect:
         Raises:
             TimeoutException: if the current url does not contain the string.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         wait.until(
             ec.url_contains(string), f"`{self._driver.url}` does not contain `{string}`"
         )
@@ -323,7 +323,7 @@ class Expect:
         Raises:
             TimeoutException: if the title doesn't match.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         wait.until(ec.title_is(title), f"`{title} != {self._driver.title}")
 
     def page_title_to_contain(self, string: str, timeout: int = None) -> None:
@@ -337,7 +337,7 @@ class Expect:
         Raises:
             TimeoutException: if the current title does not contain the string.
         """
-        wait = WebDriverWait(self.webdriver, timeout) if timeout else self._driver.wait
+        wait = WebDriverWait(self._driver.webdriver, timeout) if timeout else self._driver.wait
         wait.until(
             ec.title_contains(string),
             f"`{self._driver.title}` does not contain `{string}`",
